@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import java.io.Serializable;
 
 @Entity
-public class Ship implements Serializable {
+public class ShipModel implements Serializable {
 
     @JsonIgnore
     @Id
@@ -21,7 +21,7 @@ public class Ship implements Serializable {
     @JsonIgnore
     private int size;
 
-    public Ship(String name, int size) {
+    public ShipModel(String name, int size) {
         this.name = name;
         this.size = size;
     }
