@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 
 import java.io.Serializable;
 
+// Todo: remove binding to database since it is only a model
 @Entity
 public class ShipModel implements Serializable {
 
