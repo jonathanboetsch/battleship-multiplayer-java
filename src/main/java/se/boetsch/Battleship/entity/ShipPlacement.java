@@ -13,7 +13,7 @@ public class ShipPlacement implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private Ship ship;
+    private ShipModel shipModel;
 
     private ShipCoordinates startPosition;
 
@@ -23,12 +23,12 @@ public class ShipPlacement implements Serializable {
     @Enumerated(EnumType.STRING)
     private ShipOrientation orientation;
 
-    public ShipPlacement(Ship ship, ShipCoordinates startPosition, ShipOrientation orientation) {
-        this.ship = ship;
+    public ShipPlacement(ShipModel shipModel, ShipCoordinates startPosition, ShipOrientation orientation) {
+        this.shipModel = shipModel;
         this.startPosition = startPosition;
         this.orientation = orientation;
-        int addHorizontal = orientation.equals(ShipOrientation.HORIZONTAL) ? ship.getSize() : 0;
-        int addVertical = orientation.equals(ShipOrientation.VERTICAL) ? ship.getSize() : 0;
+        int addHorizontal = orientation.equals(ShipOrientation.HORIZONTAL) ? shipModel.getSize() : 0;
+        int addVertical = orientation.equals(ShipOrientation.VERTICAL) ? shipModel.getSize() : 0;
         this.endPosition = new ShipCoordinates(
                 startPosition.getHorizontalPos() + addHorizontal,
                 startPosition.getVerticalPos() + addVertical
@@ -51,13 +51,13 @@ public class ShipPlacement implements Serializable {
         this.endPosition = endPosition;
     }
 
-    public Ship getShip() {
-        return ship;
+    public ShipModel getShip() {
+        return shipModel;
     }
 
-    public void setShip(Ship ship) {
+    public void setShip(ShipModel shipModel) {
         try {
-            this.ship = ship;
+            this.shipModel = shipModel;
         } catch (Exception e) {
             throw new RuntimeException("Problem with ship instantiation");
         }
