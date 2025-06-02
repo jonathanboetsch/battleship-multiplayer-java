@@ -1,9 +1,6 @@
 package se.boetsch.Battleship.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import se.boetsch.Battleship.entity.Player;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipModel;
@@ -19,6 +16,8 @@ public class PlacedShip {
     private ShipModel shipModel;
     private ShipCoordinates shipCoordinates;
     private ShipOrientation orientation;
+    @ManyToMany
+    @JoinTable(name = "ships_player")
     private Player player;
     private boolean isAlive = true;
 
