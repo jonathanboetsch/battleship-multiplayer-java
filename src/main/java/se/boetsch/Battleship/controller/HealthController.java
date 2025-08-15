@@ -9,7 +9,7 @@ import java.util.Map;
 
 /// Endpoint to check if the server is responding
 @RestController
-@RequestMapping("/health")
+@RequestMapping("/api/v1/health")
 class HealthController {
     @GetMapping
     public ResponseEntity<?> ok() {
