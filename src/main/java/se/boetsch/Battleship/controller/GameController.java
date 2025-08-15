@@ -2,19 +2,21 @@ package se.boetsch.Battleship.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import se.boetsch.Battleship.domain.CurrentPlayer;
+import se.boetsch.Battleship.domain.Game;
+import se.boetsch.Battleship.domain.GameShip;
+import se.boetsch.Battleship.domain.PlayerSet;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipOrientation;
-import se.boetsch.Battleship.entity.ShipPlacement;
+import se.boetsch.Battleship.entity.ShipWithPlacement;
 import se.boetsch.Battleship.service.GameService;
 import se.boetsch.Battleship.service.ShipPlacementService;
 import se.boetsch.Battleship.service.ShipService;
-import jakarta.validation.Valid;
 
-import java.security.Principal;
+import java.net.http.HttpResponse;
 
-@RequestMapping("/game")
+@RequestMapping("/{playerName}/game/")
 @RestController
 public class GameController {
 
@@ -25,40 +27,102 @@ public class GameController {
     @Autowired
     ShipService shipService;
 
-    @PostMapping("/place-ship")
-    public ResponseEntity<?> placeShip(@Valid @RequestBody ShipPlacement shipPlacement, BindingResult bindingResult) {
+    /// Endpoint to check if the server is responding
+    @RestController
+    @RequestMapping("/health")
+    class HealthController {
+        @GetMapping public ResponseEntity<?> ok() { return ResponseEntity.ok().body("OK"); }
+    }
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+    /// method used to retrieve the Game instance every time an API call is made
+    private static Game getGameWithId(Integer gameId) {
+        return GameService.findGameWithId(gameId);
+    }
+
+        /// Instantiates a new Game with a Player.
+        /// @param playerName is the name the player will use for the future API calls (placement, fires, ...)
+        /// @return the newly created PlayerSet with the sessionId required to start the game (for both players)
+    @GetMapping("/new")
+    public ResponseEntity<?> newGame(@PathVariable String playerName) {
+        try {
+            CurrentPlayer player1 = populatePlayerWithName(playerName);
+            return ResponseEntity.ok().body(gameService.startNewGame(player1));
+        } catch (Exception e) {
+            return badRequest(e.getMessage());
         }
+    }
+
+
+    @PostMapping("/{gameId}/place-ship")
+    public ResponseEntity<?> placeShip(
+            @PathVariable Integer gameId,
+            @PathVariable String playerName,
+            @RequestBody ShipWithPlacement shipWithPlacement) {
+
+        CurrentPlayer player;
+        Game game;
+        PlayerSet playerSet;
 
         try {
-            shipPlacement.setShip(shipService.getShipByName(shipPlacement.getShip().getName()));
-            return ResponseEntity.ok().body(shipPlacementService.placeShip(shipPlacement));
+            player = populatePlayerWithName(playerName);
+            game = getGameWithId(gameId);
+            if (!game.getPlayers().contains(player)) {
+                game.addPlayer(player);
+            }
+            playerSet = game.getPlayerSetForPlayer(player);
+
+            shipPlacementService.populateShip(shipWithPlacement);
+            GameShip ship = shipPlacementService.placeShipInPlayerSet(shipWithPlacement, playerSet);
+            return ResponseEntity.ok().body(ship);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return badRequest(e.getMessage());
         }
 
     }
 
+    private CurrentPlayer populatePlayerWithName(String playerName) {
+        return gameService.retrieveOrCreatePlayerWithName(playerName);
+    }
+
+    // ShipWithPlacement is placed with the higher left start point
     @GetMapping("/placement-example")
-    public ResponseEntity<ShipPlacement> getShipPlacementModel() {
-        return ResponseEntity.ok().body(
-                new ShipPlacement(
-                        shipService.battleship,
-                        new ShipCoordinates(2,2),
-                        ShipOrientation.HORIZONTAL
-                )
-        );
+    public ResponseEntity<ShipWithPlacement> getShipPlacementModel() {
+        return ResponseEntity.ok().body(new ShipWithPlacement(shipService.getShipByName("BATTLESHIP"), new ShipCoordinates(2, 2), ShipOrientation.HORIZONTAL));
     }
 
-    // TODO: detect who is firing to determine the map to fire at
-    @PostMapping("/fire/{coordinates}")
+    @PostMapping("/{gameId}/fire")
     public ResponseEntity<?> fireAtCoordinates(
-            Principal principal,
-            @RequestBody ShipCoordinates coordinates
-    ){
+            @PathVariable Integer gameId,
+            @PathVariable String playerName,
+            @RequestBody ShipCoordinates coordinates) {
+        try {
+            CurrentPlayer player = populatePlayerWithName(playerName);
+            Game game = getGameWithId(gameId);
+            return ResponseEntity.ok().body(gameService.makePlayerFireAt(game, player, coordinates));
+        } catch (Exception e) {
+            return badRequest(e.getMessage());
+        }
+    }
+
+    private static ResponseEntity<String> badRequest(String message) {
+        return ResponseEntity.badRequest().body(message);
+    }
+
+    @GetMapping("/{gameId}/remaining-ships")
+    public ResponseEntity<?> getRemainingShips(@PathVariable int gameId, @PathVariable String playerName) {
+        CurrentPlayer player;
+        Game game;
+        PlayerSet playerSet;
+        try {
+            player = populatePlayerWithName(playerName);
+            game = getGameWithId(gameId);
+            playerSet = game.getPlayerSetForPlayer(player);
+            return ResponseEntity.ok().body(shipPlacementService.getRemainingShips(playerSet));
+        } catch (Exception e) {
+            return badRequest(e.getMessage());
+        }
 
     }
+
 
 }

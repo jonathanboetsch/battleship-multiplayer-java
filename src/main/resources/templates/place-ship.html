@@ -1,10 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8"/>
+    <title>Place Your Ship</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .container { max-width: 600px; margin: auto; }
+        .example, .form-section { margin-bottom: 2em; }
+        label { display: block; margin-top: 1em; }
+        input, select { width: 100%; padding: 0.5em; }
+        .info { background: #f0f0f0; padding: 1em; margin-bottom: 1em; border-radius: 5px; }
+    </style>
 </head>
 <body>
+<div class="container">
+    <h1>Ship Placement</h1>
 
+    <!-- Player and Game Info -->
+    <div class="info">
+        <p><strong>Player:</strong> <span th:text="${player.name}">PlayerName</span></p>
+        <p><strong>Game ID:</strong> <span th:text="${game.sessionId}">GameId</span></p>
+    </div>
+
+    <!-- Example Ship Placement -->
+    <div class="example">
+        <h2>Example Placement</h2>
+        <p>
+            <strong>Ship:</strong> <span th:text="${shipWithPlacement.name}">Battleship</span><br/>
+            <strong>Start Coordinates:</strong>
+            <span th:text="${shipWithPlacement.startPosition.x}">2</span>,
+            <span th:text="${shipWithPlacement.startPosition.y}">2</span>)<br/>
+            <strong>Orientation:</strong> <span th:text="${shipWithPlacement.orientation}">HORIZONTAL</span>
+        </p>
+    </div>
+
+    <!-- Ship Placement Form -->
+    <div class="form-section">
+        <h2>Place Your Ship</h2>
+        <form method="post"
+              th:action="@{'/' + ${player.name} + '/game/' + ${game.sessionId} + '/ship-placement'}" th:object="${shipWithPlacement}">
+            <label for="ship">Ship Type</label>
+            <select id="ship" th:field="*{ship.name}">
+                <option th:each="ship : ${remainingShips}" th:text="${ship.name}"
+                        th:value="${ship.name}"></option>
+            </select>
+
+            <label for="x">Start Coordinate X</label>
+            <input id="x" max="9" min="0" required th:field="*{startPosition.x}" type="number"/>
+
+            <label for="y">Start Coordinate Y</label>
+            <input id="y" max="9" min="0" required th:field="*{startPosition.y}" type="number"/>
+
+            <label for="orientation">Orientation</label>
+            <select id="orientation" th:field="*{orientation}">
+                <option th:value="HORIZONTAL">Horizontal</option>
+                <option th:value="VERTICAL">Vertical</option>
+            </select>
+
+            <button style="margin-top: 1em;" type="submit">Place Ship</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>

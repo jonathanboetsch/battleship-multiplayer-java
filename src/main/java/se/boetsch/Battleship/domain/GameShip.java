@@ -1,21 +1,16 @@
 package se.boetsch.Battleship.domain;
 
-import org.springframework.stereotype.Service;
-import se.boetsch.Battleship.entity.Player;
 import se.boetsch.Battleship.entity.ShipWithPlacement;
 
-@Service
-public class PlacedShip {
+public class GameShip {
 
     private ShipWithPlacement shipWithPlacement;
-    private Player player;
     private boolean isAlive = true;
-    private int lifes;
+    private int lives;
 
-    public PlacedShip(ShipWithPlacement shipWithPlacement, Player player) {
+    public GameShip(ShipWithPlacement shipWithPlacement) {
         this.shipWithPlacement = shipWithPlacement;
-        this.player = player;
-        this.lifes = this.shipWithPlacement.getShip().getSize();
+        this.lives = this.shipWithPlacement.getShip().getSize();
     }
 
     public ShipWithPlacement getShipWithPlacement() {
@@ -26,14 +21,6 @@ public class PlacedShip {
         this.shipWithPlacement = shipWithPlacement;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
     public boolean isAlive() {
         return isAlive;
     }
@@ -42,22 +29,31 @@ public class PlacedShip {
         isAlive = alive;
     }
 
-    public int getLifes() {
-        return lifes;
+    public int getLives() {
+        return lives;
     }
 
-    public void setLifes(int lifes) {
-        this.lifes = lifes;
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     public void takeOneLife() {
-        if (this.lifes > 0) {
-            this.lifes -= 1;
+        if (this.lives > 0) {
+            this.lives -= 1;
+            if (lives == 0) setAlive(false);
         } else {
             throw new RuntimeException("Ship already sunk");
         }
     }
 
-    // TODO: add sessionUUID;
+    public String getName() {
+        return this.shipWithPlacement.getShip().getName();
+    }
 
+    @Override
+    public String toString() {
+        return "GameShip{" +
+                "shipWithPlacement=" + shipWithPlacement +
+                '}';
+    }
 }

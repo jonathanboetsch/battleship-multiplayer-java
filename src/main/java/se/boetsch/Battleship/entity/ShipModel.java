@@ -1,21 +1,10 @@
 package se.boetsch.Battleship.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
 import java.io.Serializable;
 
-// Todo: remove binding to database since it is only a model
-@Entity
 public class ShipModel implements Serializable {
-
-    @JsonIgnore
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
 
     private String name;
 
@@ -27,12 +16,7 @@ public class ShipModel implements Serializable {
         this.size = size;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public ShipModel() {
     }
 
     public String getName() {
@@ -43,4 +27,7 @@ public class ShipModel implements Serializable {
         return size;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }

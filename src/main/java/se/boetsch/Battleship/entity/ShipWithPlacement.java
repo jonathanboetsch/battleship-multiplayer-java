@@ -1,37 +1,52 @@
 package se.boetsch.Battleship.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 
-@Service
-public class ShipPlacement implements Serializable {
+public class ShipWithPlacement implements Serializable {
 
     @JsonIgnore
-    private ShipModel shipModel;
+    private ShipModel ship;
+
+    private String name;
 
     private ShipCoordinates startPosition;
 
-    @Enumerated(EnumType.STRING)
     private ShipOrientation orientation;
 
-    public ShipPlacement(ShipModel shipModel, ShipCoordinates startPosition, ShipOrientation orientation) {
-        this.shipModel = shipModel;
+    public ShipWithPlacement() {
+    }
+
+    public ShipWithPlacement(ShipModel ship, ShipCoordinates startPosition, ShipOrientation orientation) {
+        this.ship = ship;
+        this.name = ship.getName();
         this.startPosition = startPosition;
         this.orientation = orientation;
-        int addHorizontal = orientation.equals(ShipOrientation.HORIZONTAL) ? shipModel.getSize() : 0;
-        int addVertical = orientation.equals(ShipOrientation.VERTICAL) ? shipModel.getSize() : 0;
+    }
+
+    public ShipWithPlacement(String name, ShipCoordinates startPosition, ShipOrientation orientation) {
+        this.name = name;
+        this.startPosition = startPosition;
+        this.orientation = orientation;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ShipModel getShip() {
-        return shipModel;
+        return ship;
     }
 
     public void setShip(ShipModel shipModel) {
         try {
-            this.shipModel = shipModel;
+            this.ship = shipModel;
         } catch (Exception e) {
             throw new RuntimeException("Problem with ship instantiation");
         }
@@ -51,5 +66,14 @@ public class ShipPlacement implements Serializable {
 
     public void setOrientation(ShipOrientation orientation) {
         this.orientation = orientation;
+    }
+
+    @Override
+    public String toString() {
+        return "ShipWithPlacement{" +
+                "shipModel=" + ship +
+                ", startPosition=" + startPosition +
+                ", orientation=" + orientation +
+                '}';
     }
 }

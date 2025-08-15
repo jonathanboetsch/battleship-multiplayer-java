@@ -1,82 +1,137 @@
 package se.boetsch.Battleship.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import se.boetsch.Battleship.domain.GameShip;
+import se.boetsch.Battleship.domain.PlayerSet;
 import se.boetsch.Battleship.entity.ShipCoordinates;
+import se.boetsch.Battleship.entity.ShipModel;
 import se.boetsch.Battleship.entity.ShipOrientation;
-import se.boetsch.Battleship.entity.ShipPlacement;
+import se.boetsch.Battleship.entity.ShipWithPlacement;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ShipPlacementService {
 
     @Autowired
-    BattleMapService battlemapService;
+    BattleMapService battleMapService;
+    @Autowired
+    ShipService shipService;
 
     // coordinates set to
     // 0 if under examination before placement
     // 1 if a boat is positioned
-    private final BattleMap battleMap;
 
-    public ShipPlacementService(BattleMap battleMap) {
-        this.battleMap = battleMap;
+    private static boolean isShipPlacedOutsideTheMap(ShipWithPlacement shipWithPlacement) {
+        return shipWithPlacement.getStartPosition().getX() + shipWithPlacement.getShip().getSize() > 10;
     }
 
-    private static boolean isShipPlacedOutsideTheMap(ShipPlacement shipPlacement) {
-        return shipPlacement.getStartPosition().getHorizontalPos() + shipPlacement.getShip().getSize() > 10;
+    private static boolean isPlayerSetContainingShip(PlayerSet playerSet, String shipName) {
+        return playerSet.getPlacedShips()
+                .stream()
+                .anyMatch(existingShip -> existingShip.getName().equals(shipName));
     }
 
-    public ShipPlacement placeShip(ShipPlacement shipPlacement) {
-        if (isShipPlacedOutsideTheMap(shipPlacement)) {
+    @Transactional
+    public GameShip placeShipInPlayerSet(ShipWithPlacement shipWithPlacement, PlayerSet playerSet) {
+        String shipName = shipWithPlacement.getShip().getName();
+        if (isShipPlacedOutsideTheMap(shipWithPlacement)) {
             throw new RuntimeException("Ship positions outside the map !");
-        } else if (isShipPlacementConflicting(shipPlacement)) {
-            throw new RuntimeException("Conflicts with an already placed ship !");
+
+        } else if (isPlayerSetContainingShip(playerSet, shipName)) {
+            String remainingShips = getRemainingShips(playerSet);
+            throw new RuntimeException("Ship already placed, remaining:" + remainingShips);
+
         } else {
+            Optional<ShipCoordinates> shipToBeFound = getConflictingCoordinates(shipWithPlacement, playerSet);
+            if (shipToBeFound.isPresent())
+                throw new RuntimeException(
+                        "Conflicts with " +
+                                battleMapService
+                                        .getShipAtCoordinatesForPlayerSet(shipToBeFound.get(), playerSet)
+                                        .orElseThrow(RuntimeException::new) +
+                                " at: " + shipToBeFound.get());
+
+            GameShip shipToPlace;
             try {
-                for (int i = 0; i < shipPlacement.getShip().getSize() ; i++) {
-                    ShipCoordinates examinedCoordinates = updateExaminedCoordinates(shipPlacement, i);
-                    battleMap.setCoordinatesActive(examinedCoordinates);
+                shipToPlace = new GameShip(shipWithPlacement);
+                playerSet.addPlacedShip(shipToPlace);
+
+                for (int i = 0; i < shipWithPlacement.getShip().getSize(); i++) {
+                    ShipCoordinates examinedCoordinates = updateExaminedCoordinates(shipWithPlacement, i);
+                    battleMapService.setShipAtCoordinatesForPlayerSet(shipToPlace, examinedCoordinates, playerSet);
                 }
+
             } catch (Exception e) {
-                throw new RuntimeException("Couldn't determine placement conflicts");
+                throw new RuntimeException(e.toString());
             }
-            return shipPlacement;
+            playerSet.setShipsPlacementComplete(playerSet.getShips().size() == shipService.getShipModels().size());
+            return shipToPlace;
         }
     }
 
-    private boolean isShipPlacementConflicting(ShipPlacement shipPlacement) {
-        return getConflictingCoordinates(shipPlacement).isPresent();
+    public Set<String> getAllOccupiedCoordinatesForShips(Set<GameShip> ships) {
+        Set<String> occupied = new HashSet<>();
+        for (GameShip ship : ships) {
+            ShipWithPlacement placement = ship.getShipWithPlacement();
+            int size = placement.getShip().getSize();
+
+            for (int i = 0; i < size; i++) {
+                ShipCoordinates coord = updateExaminedCoordinates(placement, i);
+                char rowChar = (char) ('A' + coord.getY());
+                int colNum = coord.getX() + 1;
+                occupied.add("" + rowChar + colNum);
+            }
+        }
+        return occupied;
     }
 
-    private Optional<ShipCoordinates> getConflictingCoordinates(ShipPlacement shipPlacement) {
-        for (int i = 0; i < shipPlacement.getShip().getSize(); i++) {
-            ShipCoordinates examinedCoordinates = updateExaminedCoordinates(shipPlacement, i);
-            int valueAtPoint = battlemapService.getValueAtCoordinates(examinedCoordinates);
-            if (valueAtPoint == 1) return Optional.of(examinedCoordinates);
+    public String getRemainingShips(PlayerSet playerSet) {
+        return shipService.getShipModels().stream()
+                .map(ShipModel::getName)
+                .filter(name -> playerSet.getPlacedShips().stream().noneMatch(m -> m.getName().equalsIgnoreCase(name))).toList().toString();
+    }
+
+    private Optional<ShipCoordinates> getConflictingCoordinates(ShipWithPlacement shipWithPlacement, PlayerSet playerSet) {
+        for (int i = 0; i < shipWithPlacement.getShip().getSize(); i++) {
+            ShipCoordinates examinedCoordinates = updateExaminedCoordinates(shipWithPlacement, i);
+            Optional<GameShip> shipAtCoordinates = battleMapService.getShipAtCoordinatesForPlayerSet(examinedCoordinates, playerSet);
+            if (shipAtCoordinates.isPresent()) return Optional.of(examinedCoordinates);
         }
         return Optional.empty();
     }
 
-    private ShipCoordinates updateExaminedCoordinates(ShipPlacement shipPlacement, int i) {
+    public ShipCoordinates updateExaminedCoordinates(ShipWithPlacement shipWithPlacement, int i) {
         return new ShipCoordinates(
-                shipPlacement.getStartPosition().getHorizontalPos() + i * horizontalCoeff(shipPlacement),
-                shipPlacement.getStartPosition().getVerticalPos() + i * verticalCoeff(shipPlacement)
+                shipWithPlacement.getStartPosition().getX() + i * horizontalCoeff(shipWithPlacement),
+                shipWithPlacement.getStartPosition().getY() + i * verticalCoeff(shipWithPlacement)
         );
     }
 
-    private int horizontalCoeff(ShipPlacement shipPlacement) {
-        if (shipPlacement.getOrientation().equals(ShipOrientation.HORIZONTAL)) {
+    private int horizontalCoeff(ShipWithPlacement shipWithPlacement) {
+        if (shipWithPlacement.getOrientation().equals(ShipOrientation.HORIZONTAL)) {
             return 1;
-        } else if (shipPlacement.getOrientation().equals(ShipOrientation.VERTICAL)) {
+        } else if (shipWithPlacement.getOrientation().equals(ShipOrientation.VERTICAL)) {
             return 0;
         } else {
             throw new RuntimeException("Wrong value orientation");
         }
     }
 
-    private int verticalCoeff(ShipPlacement shipPlacement) {
-        return Math.abs(horizontalCoeff(shipPlacement) - 1); // returns opposite value of horizontalCoeff()
+    private int verticalCoeff(ShipWithPlacement shipWithPlacement) {
+        return Math.abs(horizontalCoeff(shipWithPlacement) - 1); // returns opposite value of horizontalCoeff()
     }
 
+    public void populateShip(ShipWithPlacement shipWithPlacement) {
+        if (shipWithPlacement.getName() == null && (shipWithPlacement.getShip() == null || shipWithPlacement.getShip().getName() == null)) { throw new RuntimeException("Ship should not be null"); }
+        shipWithPlacement.setShip(
+                shipService.getShipByName(
+                        shipWithPlacement.getName() == null ? shipWithPlacement.getShip().getName() : shipWithPlacement.getName()
+                )
+        );
+    }
 }

@@ -1,34 +1,42 @@
 package se.boetsch.Battleship.entity;
 
-import org.springframework.stereotype.Service;
-
 import java.io.Serializable;
 
-@Service
 public class ShipCoordinates implements Serializable {
 
-    int horizontalPos;
+    int x;
 
-    int verticalPos;
+    int y;
 
-    public ShipCoordinates(int horizontalPos, int verticalPos) {
-        this.horizontalPos = horizontalPos;
-        this.verticalPos = verticalPos;
+    public ShipCoordinates() {
     }
 
-    public int getHorizontalPos() {
-        return horizontalPos;
+    public ShipCoordinates(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public void setHorizontalPos(int horizontalPos) {
-        this.horizontalPos = horizontalPos;
+    public int getX() {
+        return x;
     }
 
-    public int getVerticalPos() {
-        return verticalPos;
+    public void setX(int x) {
+        this.x = x;
     }
 
-    public void setVerticalPos(int verticalPos) {
-        this.verticalPos = verticalPos;
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "ShipCoordinates{" +
+                "horizontalPos=" + x +
+                ", verticalPos=" + y +
+                '}';
     }
 }

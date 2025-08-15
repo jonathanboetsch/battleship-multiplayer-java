@@ -1,6 +1,7 @@
 package se.boetsch.Battleship.service;
 
 import jakarta.persistence.*;
+import se.boetsch.Battleship.domain.GameShip;
 import se.boetsch.Battleship.entity.Player;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 
@@ -18,25 +19,29 @@ public class BattleMap {
     // map is set at [x][y] if there is a boat placed at the coordinates x,y;
     // otherwise it is null
     // allows to check quickly for conflicting placement as well as determine if a player has fired at a ship
-    private int[][] map;
+    private GameShip[][] map;
 
     public BattleMap() {
-        map = new int[10][10];
+        map = new GameShip[10][10];
     }
 
-    public int[][] getMap() {
+    public GameShip[][] getMap() {
         return map;
     }
 
-    public void setMap(int[][] map) {
+    public void setMap(GameShip[][] map) {
         this.map = map;
     }
 
-    public void setCoordinatesActive(int x, int y) {
-        map[x][y] = 1;
+    public void setShipAtCoordinates(GameShip ship, int x, int y) {
+        map[x][y] = ship;
     }
 
-    public void setCoordinatesActive(ShipCoordinates coordinates) {
-        map[coordinates.getHorizontalPos()][coordinates.getVerticalPos()] = 1;
+    public void setShipAtCoordinates(GameShip ship, ShipCoordinates coordinates) {
+        try {
+            map[coordinates.getX()][coordinates.getY()] = ship;
+        } catch (Exception e) {
+            throw new RuntimeException("Error at ship placement inside the BattleMap instance");
+        }
     }
 }
