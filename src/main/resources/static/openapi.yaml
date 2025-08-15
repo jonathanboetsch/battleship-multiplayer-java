@@ -1,0 +1,304 @@
+openapi: 3.1.0
+info:
+  title: Battleship Multiplayer API (v1 bootstrap)
+  version: 1.0.0
+  description: >
+    Minimal REST version for demonstration purposes.
+    Keeps the legacy implementation internally but exposes a clean API surface.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development
+
+paths:
+  /api/v1/health:
+    get:
+      summary: Check if the API is operational
+      responses:
+        '200':
+          description: API is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: UP
+
+  /api/v1/games:
+    post:
+      summary: Create a new game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostPlayerName:
+                  type: string
+              required: [ hostPlayerName ]
+              example: { hostPlayerName: "Alice" }
+      responses:
+        '201':
+          description: Game created
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /api/v1/games/42
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameSummaryDto'
+
+  /api/v1/games/{gameId}:
+    get:
+      summary: Get the current state of a game
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          description: Game state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/games/{gameId}/players/{playerId}/ships/remaining-to-place:
+    get:
+      summary: List ships remaining to be placed by a player
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/playerId'
+      responses:
+        '200':
+          description: List of ships to be placed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remainingToPlace:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ShipToPlaceDto'
+
+  # TODO: Future endpoints: join game, place ship, fire, get board, etc.
+  /{playerName}/game/{gameId}/place-ship:
+    post:
+      tags: [ legacy ]
+      deprecated: true
+      summary: Place a ship for the given player (legacy path)
+      parameters:
+        - name: playerName
+          in: path
+          required: true
+          schema: { type: string }
+        - name: gameId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipWithPlacementLegacy'
+            examples:
+              sample:
+                value:
+                  # Either provide name OR ship object; service populates the model
+                  name: BATTLESHIP
+                  startPosition: { x: 2, y: 2 }
+                  orientation: HORIZONTAL
+      responses:
+        '200':
+          description: Ship placed (returns internal GameShip object)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameShipLegacy'
+        '400':
+          description: Validation or placement conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /{playerName}/game/{gameId}/fire:
+    post:
+      tags: [ legacy ]
+      deprecated: true
+      summary: Fire at coordinates for the given player (legacy path)
+      parameters:
+        - name: playerName
+          in: path
+          required: true
+          schema: { type: string }
+        - name: gameId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoordinatesDto'
+            examples:
+              sample:
+                value: { x: 4, y: 7 }
+      responses:
+        '200':
+          description: Fire result (legacy service result)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FireResultLegacy'
+        '400':
+          description: Invalid coordinates or game state error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /{playerName}/game/placement-example:
+    get:
+      tags: [ legacy ]
+      deprecated: true
+      summary: Example payload for ship placement (legacy)
+      responses:
+        '200':
+          description: Example ShipWithPlacement object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipWithPlacementLegacy'
+
+components:
+  parameters:
+    gameId:
+      in: path
+      name: gameId
+      schema:
+        type: integer
+      required: true
+    playerId:
+      in: path
+      name: playerId
+      schema:
+        type: string
+      required: true
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDto'
+
+  schemas:
+    GameSummaryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+          enum: [ WAITING_FOR_PLAYERS, IN_PROGRESS, FINISHED ]
+    GameDto:
+      allOf:
+        - $ref: '#/components/schemas/GameSummaryDto'
+        - type: object
+          properties:
+            players:
+              type: array
+              items:
+                $ref: '#/components/schemas/PlayerDto'
+    PlayerDto:
+      type: object
+      properties:
+        playerId:
+          type: string
+        name:
+          type: string
+    ShipToPlaceDto:
+      type: object
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
+    ErrorDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        code:
+          type: string
+        message:
+          type: string
+    CoordinatesDto:
+      type: object
+      properties:
+        x: { type: integer, minimum: 0 }
+        y: { type: integer, minimum: 0 }
+      required: [ x, y ]
+
+    ShipModelLegacy:
+      type: object
+      description: Internal ship model used by legacy endpoints
+      properties:
+        name: { type: string, description: ship type, enum: [ CARRIER, BATTLESHIP, CRUISER, SUBMARINE, DESTROYER ],
+                example: BATTLESHIP }
+        size: {
+          type: integer,
+          description: Number of cells the ship occupies,
+          enum: [ 5, 4, 3, 3, 2 ],
+          example: 4 }
+
+    ShipWithPlacementLegacy:
+      type: object
+      description: Legacy placement payload accepted by the app.
+      properties:
+        # Either provide 'name' OR a nested 'ship' object; the service will resolve it.
+        name: { type: string, description: "Ship name (e.g., BATTLESHIP)" }
+        ship:
+          $ref: '#/components/schemas/ShipModelLegacy'
+        startPosition:
+          $ref: '#/components/schemas/CoordinatesDto'
+        orientation:
+          type: string
+          enum: [ HORIZONTAL, VERTICAL ]
+      required: [ startPosition, orientation ]
+
+    GameShipLegacy:
+      type: object
+      description: Internal representation returned by legacy place-ship.
+      additionalProperties: true
+      example:
+        name: BATTLESHIP
+        size: 4
+        orientation: HORIZONTAL
+        cells:
+          - { x: 2, y: 2 }
+          - { x: 3, y: 2 }
+          - { x: 4, y: 2 }
+          - { x: 5, y: 2 }
+
+    FireResultLegacy:
+      type: object
+      description: Result returned by legacy fireAtCoordinates service.
+      additionalProperties: true
+      example:
+        result: HIT
+        sunkType: null
+        coordinates: { x: 4, y: 7 }
