@@ -27,21 +27,19 @@ public class GameController {
     @Autowired
     ShipService shipService;
 
-    /// Endpoint to check if the server is responding
-    @RestController
-    @RequestMapping("/health")
-    class HealthController {
-        @GetMapping public ResponseEntity<?> ok() { return ResponseEntity.ok().body("OK"); }
-    }
-
     /// method used to retrieve the Game instance every time an API call is made
     private static Game getGameWithId(Integer gameId) {
         return GameService.findGameWithId(gameId);
     }
 
-        /// Instantiates a new Game with a Player.
-        /// @param playerName is the name the player will use for the future API calls (placement, fires, ...)
-        /// @return the newly created PlayerSet with the sessionId required to start the game (for both players)
+    private static ResponseEntity<String> badRequest(String message) {
+        return ResponseEntity.badRequest().body(message);
+    }
+
+    /// Instantiates a new Game with a Player.
+    ///
+    /// @param playerName is the name the player will use for the future API calls (placement, fires, ...)
+    /// @return the newly created PlayerSet with the sessionId required to start the game (for both players)
     @GetMapping("/new")
     public ResponseEntity<?> newGame(@PathVariable String playerName) {
         try {
@@ -104,10 +102,6 @@ public class GameController {
         }
     }
 
-    private static ResponseEntity<String> badRequest(String message) {
-        return ResponseEntity.badRequest().body(message);
-    }
-
     /// REST endpoint that returns, for a given player name and game id, a list of ships that remain to place
     ///   in order to be able to start to fire (both players need to have placed their respective ships before).
     /// Nota: the local variable names have been shortened in order to limit mental overhead, after APoSD books tips.
@@ -128,6 +122,16 @@ public class GameController {
             return badRequest(e.getMessage());
         }
 
+    }
+
+    /// Endpoint to check if the server is responding
+    @RestController
+    @RequestMapping("/health")
+    class HealthController {
+        @GetMapping
+        public ResponseEntity<?> ok() {
+            return ResponseEntity.ok().body("OK");
+        }
     }
 
 
