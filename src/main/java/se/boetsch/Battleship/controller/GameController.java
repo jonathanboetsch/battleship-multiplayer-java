@@ -124,15 +124,7 @@ public class GameController {
 
     }
 
-    /// Endpoint to check if the server is responding
-    @RestController
-    @RequestMapping("/health")
-    class HealthController {
-        @GetMapping
-        public ResponseEntity<?> ok() {
-            return ResponseEntity.ok().body("OK");
-        }
-    }
+
 
 
 }
