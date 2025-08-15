@@ -40,6 +40,7 @@ public class GameController {
     ///
     /// @param playerName is the name the player will use for the future API calls (placement, fires, ...)
     /// @return the newly created PlayerSet with the sessionId required to start the game (for both players)
+    ///
     @GetMapping("/new")
     public ResponseEntity<?> newGame(@PathVariable String playerName) {
         try {
@@ -102,9 +103,11 @@ public class GameController {
         }
     }
 
+    ///
     /// REST endpoint that returns, for a given player name and game id, a list of ships that remain to place
     ///   in order to be able to start to fire (both players need to have placed their respective ships before).
     /// Nota: the local variable names have been shortened in order to limit mental overhead, after APoSD books tips.
+    ///
     @GetMapping("/{gameId}/remaining-ships")
     public ResponseEntity<?> getShipsToPlace(@PathVariable int gameId, @PathVariable String playerName) {
         CurrentPlayer p;
