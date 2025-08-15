@@ -2,23 +2,17 @@ package se.boetsch.Battleship.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 
-@Entity
+@Service
 public class ShipPlacement implements Serializable {
 
     @JsonIgnore
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
     private ShipModel shipModel;
 
     private ShipCoordinates startPosition;
-
-    @JsonIgnore
-    private ShipCoordinates endPosition;
 
     @Enumerated(EnumType.STRING)
     private ShipOrientation orientation;
@@ -29,26 +23,6 @@ public class ShipPlacement implements Serializable {
         this.orientation = orientation;
         int addHorizontal = orientation.equals(ShipOrientation.HORIZONTAL) ? shipModel.getSize() : 0;
         int addVertical = orientation.equals(ShipOrientation.VERTICAL) ? shipModel.getSize() : 0;
-        this.endPosition = new ShipCoordinates(
-                startPosition.getHorizontalPos() + addHorizontal,
-                startPosition.getVerticalPos() + addVertical
-        );
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public ShipCoordinates getEndPosition() {
-        return endPosition;
-    }
-
-    public void setEndPosition(ShipCoordinates endPosition) {
-        this.endPosition = endPosition;
     }
 
     public ShipModel getShip() {
