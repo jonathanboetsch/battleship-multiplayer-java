@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.boetsch.Battleship.domain.GameShip;
 import se.boetsch.Battleship.domain.PlayerSet;
+import se.boetsch.Battleship.domain.ShipToPlaceDto;
 import se.boetsch.Battleship.entity.ShipCoordinates;
-import se.boetsch.Battleship.entity.ShipModel;
 import se.boetsch.Battleship.entity.ShipOrientation;
 import se.boetsch.Battleship.entity.ShipWithPlacement;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,7 +44,7 @@ public class ShipPlacementService {
             throw new RuntimeException("Ship positions outside the map !");
 
         } else if (isPlayerSetContainingShip(playerSet, shipName)) {
-            String remainingShips = getRemainingShips(playerSet);
+            List<ShipToPlaceDto> remainingShips = getRemainingShipModelsToPlace(playerSet);
             throw new RuntimeException("Ship already placed, remaining:" + remainingShips);
 
         } else {
@@ -90,10 +91,12 @@ public class ShipPlacementService {
         return occupied;
     }
 
-    public String getRemainingShips(PlayerSet playerSet) {
+    public List<ShipToPlaceDto> getRemainingShipModelsToPlace(PlayerSet ps) {
         return shipService.getShipModels().stream()
-                .map(ShipModel::getName)
-                .filter(name -> playerSet.getPlacedShips().stream().noneMatch(m -> m.getName().equalsIgnoreCase(name))).toList().toString();
+                .filter(model -> ps.getPlacedShips().stream()
+                        .noneMatch(m -> m.getName().equalsIgnoreCase(model.getName())))
+                .map(model -> new ShipToPlaceDto(model.getName(), model.getSize()))
+                .toList();
     }
 
     private Optional<ShipCoordinates> getConflictingCoordinates(ShipWithPlacement shipWithPlacement, PlayerSet playerSet) {

@@ -14,7 +14,7 @@ import se.boetsch.Battleship.service.GameService;
 import se.boetsch.Battleship.service.ShipPlacementService;
 import se.boetsch.Battleship.service.ShipService;
 
-import java.net.http.HttpResponse;
+import java.util.Map;
 
 @RequestMapping("/{playerName}/game/")
 @RestController
@@ -108,16 +108,22 @@ public class GameController {
         return ResponseEntity.badRequest().body(message);
     }
 
+    /// REST endpoint that returns, for a given player name and game id, a list of ships that remain to place
+    ///   in order to be able to start to fire (both players need to have placed their respective ships before).
+    /// Nota: the local variable names have been shortened in order to limit mental overhead, after APoSD books tips.
     @GetMapping("/{gameId}/remaining-ships")
-    public ResponseEntity<?> getRemainingShips(@PathVariable int gameId, @PathVariable String playerName) {
-        CurrentPlayer player;
-        Game game;
-        PlayerSet playerSet;
+    public ResponseEntity<?> getShipsToPlace(@PathVariable int gameId, @PathVariable String playerName) {
+        CurrentPlayer p;
+        Game g;
+        PlayerSet ps;
         try {
-            player = populatePlayerWithName(playerName);
-            game = getGameWithId(gameId);
-            playerSet = game.getPlayerSetForPlayer(player);
-            return ResponseEntity.ok().body(shipPlacementService.getRemainingShips(playerSet));
+            p = populatePlayerWithName(playerName);
+            g = getGameWithId(gameId);
+            ps = g.getPlayerSetForPlayer(p);
+            return ResponseEntity.ok(
+                    Map.of("remainingToPlace", shipPlacementService.getRemainingShipModelsToPlace(ps))
+            );
+
         } catch (Exception e) {
             return badRequest(e.getMessage());
         }
