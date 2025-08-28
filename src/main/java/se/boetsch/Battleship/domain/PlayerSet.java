@@ -1,6 +1,8 @@
 package se.boetsch.Battleship.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import se.boetsch.Battleship.dto.ShipToPlaceDTO;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.service.BattleMap;
@@ -13,10 +15,18 @@ import java.util.Set;
 public class PlayerSet {
 
     private static final ShipService shipService = new ShipService();
+    @Setter
+    @Getter
     private SessionId sessionId;
+    @Setter
+    @Getter
     private Set<GameShip> ships;
+    @Getter
     private Set<FirePoint> fires;
+    @Getter
+    @Setter
     private boolean isShipsPlacementComplete;
+    @Setter
     @JsonIgnore
     private BattleMap battleMap;
 
@@ -43,44 +53,12 @@ public class PlayerSet {
         return playerSet.getPlacedShips().size();
     }
 
-    public boolean isShipsPlacementComplete() {
-        return isShipsPlacementComplete;
-    }
-
-    public void setShipsPlacementComplete(boolean shipsPlacementComplete) {
-        isShipsPlacementComplete = shipsPlacementComplete;
-    }
-
     public BattleMap getBattleMap() {
         try {
             return battleMap;
         } catch (Exception e) {
             throw new RuntimeException("Error when fetching the battle map");
         }
-    }
-
-    public void setBattleMap(BattleMap battleMap) {
-        this.battleMap = battleMap;
-    }
-
-    public SessionId getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(SessionId sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public Set<GameShip> getShips() {
-        return ships;
-    }
-
-    public void setShips(Set<GameShip> ships) {
-        this.ships = ships;
-    }
-
-    public Set<FirePoint> getFires() {
-        return fires;
     }
 
     public void setFires(Set<FirePoint> fires) {
