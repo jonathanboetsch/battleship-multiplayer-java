@@ -120,7 +120,7 @@ public class GameController {
             g = getGameWithId(gameId);
             ps = g.getPlayerSetForPlayer(p);
             return ResponseEntity.ok(
-                    Map.of("remainingToPlace", shipPlacementService.getRemainingShipModelsToPlace(ps))
+                    Map.of("remainingToPlace", ps.getRemainingShipModelsToPlace())
             );
 
         } catch (Exception e) {

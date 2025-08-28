@@ -119,9 +119,10 @@ public class PlayerSet {
     }
 
 
-    public List<ShipToPlaceDTO> getRemainingShipModelsToPlace(PlayerSet ps) {
-        return shipService.getShipModels().stream()
-                .filter(model -> ps.getPlacedShips().stream()
+    public List<ShipToPlaceDTO> getRemainingShipModelsToPlace() {
+        return ShipService
+                .getShipModels().stream()
+                .filter(model -> getPlacedShips().stream()
                         .noneMatch(m -> m.getName().equalsIgnoreCase(model.getName())))
                 .map(model -> new ShipToPlaceDTO(model.getName(), model.getSize()))
                 .toList();
