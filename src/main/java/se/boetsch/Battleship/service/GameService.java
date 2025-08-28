@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GameService {
 
-    private static final Set<Game> games = ConcurrentHashMap.newKeySet();
-    @Autowired
+    private static ConcurrentHashMap<Long, Game> gamesById = new ConcurrentHashMap<>();
+    private final
     CurrentPlayerService currentPlayerService;
     @Autowired
     BattleMapService battleMapService;
@@ -30,6 +30,10 @@ public class GameService {
         this.shipService = shipService;
         this.gameMapper = gameMapper;
         this.shipPlacementService = shipPlacementService;
+    }
+
+    public static Game findGameWithId(long gameId) {
+        return Optional.ofNullable(gamesById.get(gameId)).orElseThrow(() -> new GameException("Game with id " + gameId + " not found"));
     }
 
     public GameService() {
