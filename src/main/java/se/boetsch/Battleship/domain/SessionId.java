@@ -9,9 +9,6 @@ public class SessionId {
 
     private static Set<SessionId> sessionIds = ConcurrentHashMap.newKeySet();
 
-    private static Random randomGen = new Random();
-
-    private final int id;
     private final AtomicLong seq = new AtomicLong(1); // start at 1
     private final long id;
 
