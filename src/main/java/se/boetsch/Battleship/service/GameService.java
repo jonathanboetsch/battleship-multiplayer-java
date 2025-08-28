@@ -17,9 +17,9 @@ public class GameService {
     private static ConcurrentHashMap<Long, Game> gamesById = new ConcurrentHashMap<>();
     private final
     CurrentPlayerService currentPlayerService;
-    @Autowired
+    private final
     BattleMapService battleMapService;
-    @Autowired
+    private final
     ShipService shipService;
     private final GameMapper gameMapper;
     private final ShipPlacementService shipPlacementService;
