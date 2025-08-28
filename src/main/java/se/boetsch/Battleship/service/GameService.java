@@ -46,8 +46,8 @@ public class GameService {
                 .orElseThrow(() -> new RuntimeException("No game found with the id: " + gameId));
     }
 
-    public static Optional<CurrentPlayer> findPlayerWithName(String playerName) {
-        return CurrentPlayerService.findByName(playerName);
+    public Optional<CurrentPlayer> findPlayerWithName(String playerName) {
+        return currentPlayerService.findByName(playerName);
     }
 
     private static void registerFiredPoint(PlayerSet playerSet, ShipCoordinates coordinates, FireResult fireResult) {
