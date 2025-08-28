@@ -1,11 +1,13 @@
 package se.boetsch.Battleship.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import se.boetsch.Battleship.dto.ShipToPlaceDTO;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.service.BattleMap;
 import se.boetsch.Battleship.service.ShipService;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PlayerSet {
@@ -117,4 +119,11 @@ public class PlayerSet {
     }
 
 
+    public List<ShipToPlaceDTO> getRemainingShipModelsToPlace(PlayerSet ps) {
+        return shipService.getShipModels().stream()
+                .filter(model -> ps.getPlacedShips().stream()
+                        .noneMatch(m -> m.getName().equalsIgnoreCase(model.getName())))
+                .map(model -> new ShipToPlaceDTO(model.getName(), model.getSize()))
+                .toList();
+    }
 }

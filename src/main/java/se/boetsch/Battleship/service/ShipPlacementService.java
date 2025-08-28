@@ -91,14 +91,6 @@ public class ShipPlacementService {
         return occupied;
     }
 
-    public List<ShipToPlaceDto> getRemainingShipModelsToPlace(PlayerSet ps) {
-        return shipService.getShipModels().stream()
-                .filter(model -> ps.getPlacedShips().stream()
-                        .noneMatch(m -> m.getName().equalsIgnoreCase(model.getName())))
-                .map(model -> new ShipToPlaceDto(model.getName(), model.getSize()))
-                .toList();
-    }
-
     private Optional<ShipCoordinates> getConflictingCoordinates(ShipWithPlacement shipWithPlacement, PlayerSet playerSet) {
         for (int i = 0; i < shipWithPlacement.getShip().getSize(); i++) {
             ShipCoordinates examinedCoordinates = updateExaminedCoordinates(shipWithPlacement, i);
