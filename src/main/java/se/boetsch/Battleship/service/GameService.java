@@ -21,6 +21,16 @@ public class GameService {
     BattleMapService battleMapService;
     @Autowired
     ShipService shipService;
+    private final GameMapper gameMapper;
+    private final ShipPlacementService shipPlacementService;
+
+    public GameService(CurrentPlayerService currentPlayerService, BattleMapService battleMapService, ShipService shipService, GameMapper gameMapper, ShipPlacementService shipPlacementService, PlayerService playerService) {
+        this.currentPlayerService = currentPlayerService;
+        this.battleMapService = battleMapService;
+        this.shipService = shipService;
+        this.gameMapper = gameMapper;
+        this.shipPlacementService = shipPlacementService;
+    }
 
     public GameService() {
     }
