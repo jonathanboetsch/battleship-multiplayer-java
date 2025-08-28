@@ -3,6 +3,7 @@ package se.boetsch.Battleship.domain;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class SessionId {
 
@@ -11,6 +12,8 @@ public class SessionId {
     private static Random randomGen = new Random();
 
     private final int id;
+    private final AtomicLong seq = new AtomicLong(1); // start at 1
+    private final long id;
 
     public SessionId() {
         this.id = retrieveNewSessionId();
