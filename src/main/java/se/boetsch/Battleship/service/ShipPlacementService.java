@@ -4,10 +4,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import se.boetsch.Battleship.domain.GameShip;
 import se.boetsch.Battleship.domain.PlayerSet;
-import se.boetsch.Battleship.domain.ShipToPlaceDto;
+import se.boetsch.Battleship.domain.ShipModel;
+import se.boetsch.Battleship.domain.ShipWithPlacement;
+import se.boetsch.Battleship.dto.ShipToPlaceDTO;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipOrientation;
-import se.boetsch.Battleship.entity.ShipWithPlacement;
 
 import java.util.HashSet;
 import java.util.List;
