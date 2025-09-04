@@ -1,7 +1,10 @@
 package se.boetsch.Battleship.domain;
 
-import se.boetsch.Battleship.entity.ShipWithPlacement;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class GameShip {
 
     private ShipWithPlacement shipWithPlacement;
@@ -11,30 +14,6 @@ public class GameShip {
     public GameShip(ShipWithPlacement shipWithPlacement) {
         this.shipWithPlacement = shipWithPlacement;
         this.lives = this.shipWithPlacement.getShip().getSize();
-    }
-
-    public ShipWithPlacement getShipWithPlacement() {
-        return shipWithPlacement;
-    }
-
-    public void setShipWithPlacement(ShipWithPlacement shipWithPlacement) {
-        this.shipWithPlacement = shipWithPlacement;
-    }
-
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }
-
-    public int getLives() {
-        return lives;
-    }
-
-    public void setLives(int lives) {
-        this.lives = lives;
     }
 
     public void takeOneLife() {
