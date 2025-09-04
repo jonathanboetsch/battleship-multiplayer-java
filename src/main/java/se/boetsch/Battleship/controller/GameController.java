@@ -2,10 +2,7 @@ package se.boetsch.Battleship.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import se.boetsch.Battleship.domain.CurrentPlayer;
-import se.boetsch.Battleship.domain.Game;
-import se.boetsch.Battleship.domain.GameShip;
-import se.boetsch.Battleship.domain.PlayerSet;
+import se.boetsch.Battleship.domain.*;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipOrientation;
 import se.boetsch.Battleship.exception.PlayerRetrievalException;
