@@ -1,5 +1,7 @@
 package se.boetsch.Battleship.domain;
 
+import se.boetsch.Battleship.dto.Status;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +34,7 @@ public class Game {
     }
 
     public boolean isFinished() {
-        return numberOfRemainingShips == 0;
+        return getStatus() == Status.FINISHED;
     }
 
 
@@ -94,4 +96,18 @@ public class Game {
         }
 
     }
+
+    public Status getStatus() {
+
+        if (winner) return Status.FINISHED;
+        if (playerIds.size() < 2) return Status.WAITING_FOR_PLAYERS;
+        if (!allShipsPlaced()) return Status.PLACEMENT_PHASE;
+        return Status.IN_PROGRESS;
+    }
+
+    private boolean allShipsPlaced() {
+        return playerSets.values().stream().allMatch(PlayerSet::isShipsPlacementComplete);
+    }
+
+
 }
