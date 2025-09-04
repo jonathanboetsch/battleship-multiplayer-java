@@ -50,14 +50,15 @@ public class ShipPlacementService {
             throw new RuntimeException("Ship already placed");
 
         } else {
-            Optional<ShipCoordinates> shipToBeFound = getConflictingCoordinates(shipWithPlacement, playerSet);
-            if (shipToBeFound.isPresent())
+            Optional<ShipCoordinates> conflictingShipCoordinates = getConflictingCoordinates(shipWithPlacement, playerSet);
+            if (conflictingShipCoordinates.isPresent()) {
                 throw new RuntimeException(
                         "Conflicts with " +
                                 battleMapService
-                                        .getShipAtCoordinatesForPlayerSet(shipToBeFound.get(), playerSet)
+                                        .getShipAtCoordinatesForPlayerSet(conflictingShipCoordinates.get(), playerSet)
                                         .orElseThrow(RuntimeException::new) +
-                                " at: " + shipToBeFound.get());
+                                " at: " + conflictingShipCoordinates.get());
+            }
 
             GameShip shipToPlace;
             try {
