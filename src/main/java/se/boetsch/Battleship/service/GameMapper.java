@@ -9,16 +9,20 @@ import se.boetsch.Battleship.dto.GameStatusDTO;
 public class GameMapper {
 
     private final PlayerMapper playerMapper;
+    private final PlayerService playerService;
+    private final CurrentPlayerService currentPlayerService;
 
-    public GameMapper(PlayerMapper playerMapper) {
+    public GameMapper(PlayerMapper playerMapper, PlayerService playerService, CurrentPlayerService currentPlayerService) {
         this.playerMapper = playerMapper;
+        this.playerService = playerService;
+        this.currentPlayerService = currentPlayerService;
     }
 
     public GameDTO toDTO(Game g) {
         return new GameDTO(
                 g.getSessionId().getId(),
                 g.getStatus(),
-                g.getPlayers().stream().map(playerMapper::toDTO).toList()
+                g.getPlayerIds().stream().map(currentPlayerService::findById).map(p -> playerMapper.toDTO(p.get())).toList()
         );
 
     }
