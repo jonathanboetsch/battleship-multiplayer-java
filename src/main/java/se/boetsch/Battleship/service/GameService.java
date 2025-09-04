@@ -88,9 +88,9 @@ public class GameService {
     // TODO: store hits/misses on a map to help the player for the next moves
     public String makePlayerFireAt(Game game, CurrentPlayer player, ShipCoordinates coordinates) {
         if (game.isFinished()) throw new RuntimeException("Game already finished");
-        else if (game.getPlayers().size() < 2)
+        else if (game.getPlayerIds().size() < 2)
             throw new RuntimeException("Cannot play: another player must be registered");
-        else if (!game.getPlayers().contains(player))
+        else if (!game.getPlayerIds().contains(player))
             throw new RuntimeException("Cannot play: already 2 players in the game");
         else if (game.getPlayersTurn().get(player) == false)
             throw new RuntimeException("Its not your turn");
@@ -133,7 +133,7 @@ public class GameService {
     }
 
     public void addPlayerToGameIfRelevant(CurrentPlayer player, Game game) {
-        if (!game.getPlayers().contains(player)) {
+        if (!game.getPlayerIds().contains(player.getPlayer().getId())) {
             game.addPlayer(player);
         }
     }
