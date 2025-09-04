@@ -63,8 +63,8 @@ public class GameControllerV1 {
     }
 
     @GetMapping("{gameId}/players/{playerId}/ships/remaining-to-place")
-    public ResponseEntity<?> getRemainingToPlaceShips(@PathVariable long gameId, @PathVariable long playerId) {
-        return ResponseEntity.ok(Map.of("remainingToPlace", gameService.getRemainingShipsToPlace(gameId, playerId)));
+    public ResponseEntity<?> getShipsRemainingToPlace(@PathVariable long gameId, @PathVariable long playerId) {
+        return ResponseEntity.ok(Map.of("remainingToPlace", gameService.getShipsToPlaceForGameIdAndPlayerId(gameId, playerId)));
     }
 
     @PostMapping("/{gameId}/players/{playerId}/place-ship")
