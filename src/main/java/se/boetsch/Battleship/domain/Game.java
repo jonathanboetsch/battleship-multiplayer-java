@@ -1,14 +1,11 @@
 package se.boetsch.Battleship.domain;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Game {
-
     private static final Set<SessionId> sessionIds = ConcurrentHashMap.newKeySet();
-    private final Random randomGen = new Random();
     private SessionId sessionId;
     private Set<Long> playerIds;
     private Map<Long, PlayerSet> playerSets;
