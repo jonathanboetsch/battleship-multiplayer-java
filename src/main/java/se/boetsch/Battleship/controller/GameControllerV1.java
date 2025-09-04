@@ -29,7 +29,11 @@ public class GameControllerV1 {
     final GameMapper gameMapper;
     final PlayerMapper playerMapper;
 
-    public GameControllerV1(GameService gameService, ShipPlacementService shipPlacementService, ShipService shipService, GameMapper gameMapper, PlayerMapper playerMapper) {
+    public GameControllerV1(GameService gameService,
+                            ShipPlacementService shipPlacementService,
+                            ShipService shipService,
+                            GameMapper gameMapper,
+                            PlayerMapper playerMapper) {
         this.gameService = gameService;
         this.shipPlacementService = shipPlacementService;
         this.shipService = shipService;
