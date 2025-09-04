@@ -8,7 +8,7 @@ import se.boetsch.Battleship.domain.GameShip;
 import se.boetsch.Battleship.domain.PlayerSet;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipOrientation;
-import se.boetsch.Battleship.entity.ShipWithPlacement;
+import se.boetsch.Battleship.exception.PlayerRetrievalException;
 import se.boetsch.Battleship.service.GameService;
 import se.boetsch.Battleship.service.ShipPlacementService;
 import se.boetsch.Battleship.service.ShipService;
@@ -48,7 +48,7 @@ public class GameController {
     @GetMapping("/new")
     public ResponseEntity<?> newGame(@PathVariable String playerName) {
         try {
-            CurrentPlayer player1 = populatePlayerWithName(playerName);
+            CurrentPlayer player1 = gameService.createNewCurrentPlayer(playerName);
             return ResponseEntity.ok().body(gameService.startNewGame(player1));
         } catch (Exception e) {
             return badRequest(e.getMessage());
@@ -67,9 +67,13 @@ public class GameController {
         PlayerSet playerSet;
 
         try {
-            player = populatePlayerWithName(playerName);
+            try {
+                player = gameService.findPlayerWithName(playerName);
+            } catch (PlayerRetrievalException e) {
+                player = gameService.createNewCurrentPlayer(playerName);
+            }
             game = getGameWithId(gameId);
-            if (!game.getPlayers().contains(player)) {
+            if (!game.getPlayerIds().contains(player)) {
                 game.addPlayer(player);
             }
             playerSet = game.getPlayerSetForPlayer(player);
@@ -83,9 +87,6 @@ public class GameController {
 
     }
 
-    private CurrentPlayer populatePlayerWithName(String playerName) {
-        return gameService.retrieveOrCreatePlayerWithName(playerName);
-    }
 
     // ShipWithPlacement is placed with the higher left start point
     @GetMapping("/placement-example")
@@ -99,7 +100,7 @@ public class GameController {
             @PathVariable String playerName,
             @RequestBody ShipCoordinates coordinates) {
         try {
-            CurrentPlayer player = populatePlayerWithName(playerName);
+            CurrentPlayer player = gameService.findPlayerWithName(playerName);
             Game game = getGameWithId(gameId);
             return ResponseEntity.ok().body(gameService.makePlayerFireAt(game, player, coordinates));
         } catch (Exception e) {
@@ -116,11 +117,11 @@ public class GameController {
         Game g;
         PlayerSet ps;
         try {
-            p = populatePlayerWithName(playerName);
+            p = gameService.findPlayerWithName(playerName); // enforces necessity for the player to exist
             g = getGameWithId(gameId);
             ps = g.getPlayerSetForPlayer(p);
             return ResponseEntity.ok(
-                    Map.of("remainingToPlace", ps.getRemainingShipModelsToPlace())
+                    Map.of("remainingToPlace", shipPlacementService.getRemainingShipsToPlace(ps))
             );
 
         } catch (Exception e) {
