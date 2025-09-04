@@ -20,8 +20,8 @@ public class PlayerSet {
     private SessionId sessionId;
     @Setter
     @Getter
-    private Set<GameShip> ships;
     @Getter
+    private Set<GameShip> placedShips;
     private Set<FirePoint> fires;
     @Getter
     @Setter
@@ -32,7 +32,7 @@ public class PlayerSet {
 
     public PlayerSet(SessionId sessionId) {
         this.fires = new HashSet<>();
-        this.ships = new HashSet<>();
+        this.placedShips = new HashSet<>();
         this.sessionId = sessionId;
         this.battleMap = new BattleMap();
     }
@@ -68,12 +68,12 @@ public class PlayerSet {
     }
 
     public Set<GameShip> getPlacedShips() {
-        return this.ships;
+        return this.placedShips;
     }
 
     public void setPlacedShips(Set<GameShip> placedShips) {
         checkNumberOfShips(placedShips.size());
-        this.ships = placedShips;
+        this.placedShips = placedShips;
     }
 
     public Set<FirePoint> getFiresForPlayer(CurrentPlayer player) {
@@ -81,8 +81,8 @@ public class PlayerSet {
     }
 
     public void addPlacedShip(GameShip ship) {
-        checkNumberOfShips(ships.size() + 1);
-        ships.add(ship);
+        checkNumberOfShips(placedShips.size() + 1);
+        placedShips.add(ship);
     }
 
     public void registerFireAt(ShipCoordinates coordinates, FireResult result) {

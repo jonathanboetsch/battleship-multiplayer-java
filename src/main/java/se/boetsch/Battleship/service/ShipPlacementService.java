@@ -73,7 +73,7 @@ public class ShipPlacementService {
             } catch (Exception e) {
                 throw new RuntimeException(e.toString());
             }
-            playerSet.setShipsPlacementComplete(playerSet.getShips().size() == shipService.getShipModels().size());
+            playerSet.setShipsPlacementComplete(playerSet.getPlacedShips().size() == shipService.getShipModels().size());
             return shipToPlace;
         }
     }
