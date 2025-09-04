@@ -5,13 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import se.boetsch.Battleship.domain.CurrentPlayer;
-import se.boetsch.Battleship.domain.Game;
-import se.boetsch.Battleship.domain.GameShip;
-import se.boetsch.Battleship.domain.PlayerSet;
+import se.boetsch.Battleship.domain.*;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipOrientation;
-import se.boetsch.Battleship.entity.ShipWithPlacement;
+import se.boetsch.Battleship.exception.PlayerRetrievalException;
 import se.boetsch.Battleship.service.GameService;
 import se.boetsch.Battleship.service.ShipPlacementService;
 import se.boetsch.Battleship.service.ShipService;
@@ -44,7 +41,7 @@ public class ViewController {
             @PathVariable int gameId,
             Model model
     ) {
-        CurrentPlayer player = populatePlayerWithName(playerName);
+        CurrentPlayer player = gameService.findPlayerWithName(playerName);
         Game game = getGameWithId(gameId);
         PlayerSet playerSet = game.getPlayerSets().get(player);
 
@@ -78,10 +75,6 @@ public class ViewController {
         return "placedShips";
     }
 
-    private CurrentPlayer populatePlayerWithName(String playerName) {
-        return gameService.retrieveOrCreatePlayerWithName(playerName);
-    }
-
     /**
      * Show the ship placement page with current game and player info.
      */
@@ -90,8 +83,14 @@ public class ViewController {
                                         @PathVariable Integer gameId,
                                         @RequestParam(required = false) String message,
                                         Model model) {
-        CurrentPlayer player = gameService.retrieveOrCreatePlayerWithName(playerName);
-        if (player.getName() == null) throw new RuntimeException("Player name is null");
+        if (playerName == null) { throw new IllegalArgumentException("Player name cannot be null"); }
+        if (gameId == null) { throw new IllegalArgumentException("Game id cannot be null"); }
+        CurrentPlayer player = null;
+        try {
+            player = gameService.findPlayerWithName(playerName);
+        } catch (PlayerRetrievalException e) {
+            player = gameService.createNewCurrentPlayer(playerName);
+        }
         Game game = GameService.findGameWithId(gameId);
         gameService.addPlayerToGameIfRelevant(player, game);
         PlayerSet playerSet = game.getPlayerSetForPlayer(player);
@@ -107,8 +106,9 @@ public class ViewController {
                 shipService.getShipByName("BATTLESHIP"),
                 new ShipCoordinates(2, 2),
                 ShipOrientation.HORIZONTAL);
+        PlayerSet ps = gameService.getPlayerSetForGameAndPlayerId(game.getSessionId().getId(), player.getPlayer().getId());
         model.addAttribute("shipWithPlacement", shipWithPlacement);
-        model.addAttribute("remainingShips", gameService.getShipsToPlace(playerSet));
+        model.addAttribute("remainingShips", shipPlacementService.getRemainingShipsToPlace(ps));
 
         // Could add more attributes here like remaining ships, etc.
 
@@ -122,7 +122,7 @@ public class ViewController {
     public String placeShip(@PathVariable String playerName,
                             @PathVariable Integer gameId,
                             @ModelAttribute ShipWithPlacement shipWithPlacement, BindingResult br) {
-        CurrentPlayer player = gameService.retrieveOrCreatePlayerWithName(playerName);
+        CurrentPlayer player = gameService.findPlayerWithName(playerName);
         Game game = GameService.findGameWithId(gameId);
         PlayerSet playerSet = game.getPlayerSetForPlayer(player);
         shipPlacementService.populateShip(shipWithPlacement);
