@@ -20,7 +20,6 @@ public class PlayerSet {
     private SessionId sessionId;
     @Setter
     @Getter
-    @Getter
     private Set<GameShip> placedShips;
     private Set<FirePoint> fires;
     @Getter
@@ -35,6 +34,7 @@ public class PlayerSet {
         this.placedShips = new HashSet<>();
         this.sessionId = sessionId;
         this.battleMap = new BattleMap();
+        isShipsPlacementComplete = false;
     }
     public PlayerSet() {
     }
@@ -59,21 +59,6 @@ public class PlayerSet {
         } catch (Exception e) {
             throw new RuntimeException("Error when fetching the battle map");
         }
-    }
-
-    public void setFires(Set<FirePoint> fires) {
-        checkNumberOfFires(fires.size());
-        this.fires = fires;
-
-    }
-
-    public Set<GameShip> getPlacedShips() {
-        return this.placedShips;
-    }
-
-    public void setPlacedShips(Set<GameShip> placedShips) {
-        checkNumberOfShips(placedShips.size());
-        this.placedShips = placedShips;
     }
 
     public Set<FirePoint> getFiresForPlayer(CurrentPlayer player) {
