@@ -23,13 +23,6 @@ public class Game {
 
     public Game(Long playerId) {
         this();
-
-    public int getNumberOfRemainingShips() {
-        return numberOfRemainingShips;
-    }
-
-    public void setNumberOfRemainingShips(int numberOfRemainingShips) {
-        this.numberOfRemainingShips = numberOfRemainingShips;
         this.playerIds.add(playerId);
     }
 
