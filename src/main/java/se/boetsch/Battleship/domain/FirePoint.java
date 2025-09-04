@@ -1,7 +1,6 @@
 package se.boetsch.Battleship.domain;
 
 import se.boetsch.Battleship.entity.ShipCoordinates;
-import se.boetsch.Battleship.entity.ShipModel;
 
 import java.util.Optional;
 
