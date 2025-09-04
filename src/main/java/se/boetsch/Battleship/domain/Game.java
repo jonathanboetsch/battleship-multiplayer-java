@@ -10,23 +10,20 @@ public class Game {
     private static final Set<SessionId> sessionIds = ConcurrentHashMap.newKeySet();
     private final Random randomGen = new Random();
     private SessionId sessionId;
-    private Set<CurrentPlayer> players;
-    private Map<CurrentPlayer, PlayerSet> playerSets;
-    private Map<CurrentPlayer, Boolean> playersTurn = new ConcurrentHashMap<>(2);
-    private int numberOfRemainingShips;
+    private Set<Long> playerIds;
+    private Map<Long, PlayerSet> playerSets;
+    private Map<Long, Boolean> playersTurn = new ConcurrentHashMap<>(2);
+    boolean winner = false;
 
     public Game() {
-        this.players = ConcurrentHashMap.newKeySet();
-        this.playerSets = new ConcurrentHashMap<>();
+        this.playerIds = ConcurrentHashMap.newKeySet();
+        this.playerSets = new ConcurrentHashMap<>(2);
         this.sessionId = new SessionId();
         sessionIds.add(sessionId);
     }
 
-    public Game(CurrentPlayer player) {
+    public Game(Long playerId) {
         this();
-        this.players.add(player);
-        playersTurn.put(player, false);
-    }
 
     public int getNumberOfRemainingShips() {
         return numberOfRemainingShips;
@@ -34,6 +31,7 @@ public class Game {
 
     public void setNumberOfRemainingShips(int numberOfRemainingShips) {
         this.numberOfRemainingShips = numberOfRemainingShips;
+        this.playerIds.add(playerId);
     }
 
     public boolean isFinished() {
@@ -41,11 +39,11 @@ public class Game {
     }
 
 
-    public Map<CurrentPlayer, PlayerSet> getPlayerSets() {
+    public Map<Long, PlayerSet> getPlayerSets() {
         return playerSets;
     }
 
-    public void setPlayerSets(Map<CurrentPlayer, PlayerSet> playerSets) {
+    public void setPlayerSets(Map<Long, PlayerSet> playerSets) {
         this.playerSets = playerSets;
     }
 
@@ -58,21 +56,21 @@ public class Game {
         this.sessionId = sessionId;
     }
 
-    public Set<CurrentPlayer> getPlayers() {
-        return players;
+    public Set<Long> getPlayerIds() {
+        return playerIds;
     }
 
-    public void setPlayers(Set<CurrentPlayer> players) {
-        checkNumberOfPlayers(players.size());
-        this.players = players;
+    public void setPlayerIds(Set<Long> ids) {
+        checkNumberOfPlayers(ids.size());
+        playerIds = ids;
     }
 
 
     public void addPlayer(CurrentPlayer player) {
-        checkNumberOfPlayers(players.size() + 1);
-        this.players.add(player);
-        this.playerSets.put(player, new PlayerSet(sessionId));
-        playersTurn.put(player, false);
+        checkNumberOfPlayers(playerIds.size() + 1);
+        playerIds.add(player.getPlayer().getId());
+        playerSets.put(player.getPlayer().getId(), new PlayerSet(sessionId));
+        playersTurn.put(player.getPlayer().getId(), false);
     }
 
     private void checkNumberOfPlayers(int number) {
@@ -80,20 +78,21 @@ public class Game {
     }
 
     public PlayerSet getPlayerSetForPlayer(CurrentPlayer player) {
-        if (!this.playerSets.containsKey(player)) throw new RuntimeException("Player not found in the game");
-        else return this.playerSets.get(player);
+        Long id = player.getPlayer().getId();
+        if (!playerSets.containsKey(id)) throw new RuntimeException("Player not found in the game");
+        else return playerSets.get(id);
     }
 
-    public Map<CurrentPlayer, Boolean> getPlayersTurn() {
+    public Map<Long, Boolean> getPlayersTurn() {
         return playersTurn;
     }
 
-    public void setPlayersTurn(Map<CurrentPlayer, Boolean> playersTurn) {
+    public void setPlayersTurn(Map<Long, Boolean> playersTurn) {
         this.playersTurn = playersTurn;
     }
 
     public void changeTurn() {
-        for (Map.Entry<CurrentPlayer, Boolean> entry : playersTurn.entrySet()) {
+        for (Map.Entry<Long, Boolean> entry : playersTurn.entrySet()) {
             playersTurn.put(entry.getKey(), !entry.getValue());
         }
 
