@@ -72,8 +72,7 @@ public class GameControllerV1 {
             @PathVariable long gameId,
             @PathVariable long playerId,
             @Valid @RequestBody ShipWithPlacementDTO ship) {
-        boolean success = gameService.placeShipForPlayerInGame(ship, playerId, gameId);
-        return ResponseEntity.ok(Map.of("success", success)); // TODO: more info on the response (ship, placement?)
+        return ResponseEntity.ok(Map.of("success", gameService.placeShip(ship, playerId, gameId))); // TODO: more info on the response (ship, placement?)
     }
 
 
