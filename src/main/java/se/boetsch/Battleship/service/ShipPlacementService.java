@@ -1,7 +1,6 @@
 package se.boetsch.Battleship.service;
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.boetsch.Battleship.domain.GameShip;
 import se.boetsch.Battleship.domain.PlayerSet;
@@ -18,10 +17,14 @@ import java.util.Set;
 @Service
 public class ShipPlacementService {
 
-    @Autowired
-    BattleMapService battleMapService;
-    @Autowired
-    ShipService shipService;
+    private final BattleMapService battleMapService;
+
+    private final ShipService shipService;
+
+    public ShipPlacementService(ShipService shipService, BattleMapService battleMapService) {
+        this.shipService = shipService;
+        this.battleMapService = battleMapService;
+    }
 
     // coordinates set to
     // 0 if under examination before placement
@@ -44,8 +47,7 @@ public class ShipPlacementService {
             throw new RuntimeException("Ship positions outside the map !");
 
         } else if (isPlayerSetContainingShip(playerSet, shipName)) {
-            List<ShipToPlaceDto> remainingShips = getRemainingShipModelsToPlace(playerSet);
-            throw new RuntimeException("Ship already placed, remaining:" + remainingShips);
+            throw new RuntimeException("Ship already placed");
 
         } else {
             Optional<ShipCoordinates> shipToBeFound = getConflictingCoordinates(shipWithPlacement, playerSet);
