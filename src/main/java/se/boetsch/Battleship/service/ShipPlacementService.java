@@ -78,6 +78,16 @@ public class ShipPlacementService {
         }
     }
 
+    public List<ShipToPlaceDTO> getRemainingShipsToPlace(PlayerSet ps) {
+        Set<ShipToPlaceDTO> remainingShips = new HashSet<>();
+        Set<ShipModel> placedShips = ps.getPlacedShips().stream().map(s -> s.getShipWithPlacement().getShip()).collect(Collectors.toSet());
+        for (ShipModel ship : shipService.getShipModels()) {
+            if (!placedShips.contains(ship)) {remainingShips.add(new ShipToPlaceDTO(ship.getName(), ship.getSize()));}
+        }
+        return remainingShips.stream().toList();
+    }
+
+
     public Set<String> getAllOccupiedCoordinatesForShips(Set<GameShip> ships) {
         Set<String> occupied = new HashSet<>();
         for (GameShip ship : ships) {

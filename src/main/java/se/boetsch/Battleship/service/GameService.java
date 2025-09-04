@@ -60,15 +60,6 @@ public class GameService {
                 .findAny().orElseThrow(() -> new RuntimeException("Player not found in the game with id " + game.getSessionId()));
     }
 
-    public List<ShipModel> getShipsToPlace(PlayerSet playerSet) {
-        return shipService.getShipModels()
-                .stream()
-                .filter(m -> !playerSet.getPlacedShips()
-                        .stream()
-                        .map(s -> s.getShipWithPlacement()
-                                .getShip())
-                        .toList()
-                        .contains(m)).toList();
     }
 
     public PlayerSet startNewGame(CurrentPlayer player1) {
