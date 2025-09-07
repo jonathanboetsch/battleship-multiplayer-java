@@ -31,10 +31,10 @@ public class CurrentPlayerService {
             return player;
     }
 
-    public static Optional<CurrentPlayer> findByName(String name) {
-        return players.stream()
-                .filter(p -> p.getPlayer().getName().equals(name))
-                .findFirst();
+    public Optional<CurrentPlayer> findByName(String name) {
+        return Optional.ofNullable(players.get(idByName.get(name)));
+    }
+
     }
 
 }
