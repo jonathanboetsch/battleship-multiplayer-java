@@ -3,6 +3,7 @@ package se.boetsch.Battleship.domain;
 import lombok.Getter;
 import lombok.Setter;
 import se.boetsch.Battleship.dto.Status;
+import se.boetsch.Battleship.exception.PlayerRetrievalException;
 
 import java.util.Map;
 import java.util.Set;
@@ -73,6 +74,10 @@ public class Game {
 
     private boolean allShipsPlaced() {
         return playerSets.values().stream().allMatch(PlayerSet::isShipsPlacementComplete);
+    }
+
+    public Long getOtherPlayerId(long playerId) {
+        return playerIds.stream().filter(id -> id != playerId).findFirst().orElseThrow(() -> new PlayerRetrievalException("Adversary not found yet"));
     }
 
 
