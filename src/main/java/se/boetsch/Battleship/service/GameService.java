@@ -44,6 +44,10 @@ public class GameService {
         return currentPlayerService.findByName(playerName);
     }
 
+    public CurrentPlayer retrieveCurrentPlayerWithName(String playerName) {
+        return findPlayerWithName(playerName).orElseThrow(() -> new PlayerRetrievalException("Did not found player with name: " + playerName));
+    }
+
     private void registerFiredPoint(PlayerSet playerSet, ShipCoordinates coordinates, FireResult fireResult) {
         playerSet.registerFireAt(coordinates, fireResult);
     }
