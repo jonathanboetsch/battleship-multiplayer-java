@@ -30,6 +30,7 @@ public class Game {
     public Game(Long playerId) {
         this();
         this.playerIds.add(playerId);
+        playerSets.put(playerId, new PlayerSet(sessionId));
     }
 
     public boolean isFinished() {
