@@ -65,9 +65,9 @@ public class GameController {
 
         try {
             try {
-                player = gameService.findPlayerWithName(playerName);
+                player = gameService.retrieveCurrentPlayerWithName(playerName);
             } catch (PlayerRetrievalException e) {
-                player = gameService.createNewCurrentPlayer(playerName);
+                player = gameService.createCurrentPlayerWithName(playerName);
             }
             game = getGameWithId(gameId);
             if (!game.getPlayerIds().contains(player)) {
@@ -97,7 +97,7 @@ public class GameController {
             @PathVariable String playerName,
             @RequestBody ShipCoordinates coordinates) {
         try {
-            CurrentPlayer player = gameService.findPlayerWithName(playerName);
+            CurrentPlayer player = gameService.retrieveCurrentPlayerWithName(playerName);
             Game game = getGameWithId(gameId);
             return ResponseEntity.ok().body(gameService.makePlayerFireAt(game, player, coordinates));
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public class GameController {
         Game g;
         PlayerSet ps;
         try {
-            p = gameService.findPlayerWithName(playerName); // enforces necessity for the player to exist
+            p = gameService.retrieveCurrentPlayerWithName(playerName); // enforces necessity for the player to exist
             g = getGameWithId(gameId);
             ps = g.getPlayerSetForPlayer(p);
             return ResponseEntity.ok(
