@@ -34,8 +34,8 @@ public class GameService {
     public GameService() {
     }
 
-    public static Game findGameWithId(int gameId) {
-        return games.stream()
+    public Game findGameWithId(int gameId) {
+        return games.values().stream()
                 .filter(g -> g.getSessionId().getId() == gameId)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No game found with the id: " + gameId));
