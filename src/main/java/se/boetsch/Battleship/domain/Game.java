@@ -1,11 +1,15 @@
 package se.boetsch.Battleship.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import se.boetsch.Battleship.dto.Status;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Getter
+@Setter
 public class Game {
     private static final Set<SessionId> sessionIds = ConcurrentHashMap.newKeySet();
     private SessionId sessionId;
@@ -31,27 +35,6 @@ public class Game {
     }
 
 
-    public Map<Long, PlayerSet> getPlayerSets() {
-        return playerSets;
-    }
-
-    public void setPlayerSets(Map<Long, PlayerSet> playerSets) {
-        this.playerSets = playerSets;
-    }
-
-
-    public SessionId getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(SessionId sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public Set<Long> getPlayerIds() {
-        return playerIds;
-    }
-
     public void setPlayerIds(Set<Long> ids) {
         checkNumberOfPlayers(ids.size());
         playerIds = ids;
@@ -73,14 +56,6 @@ public class Game {
         Long id = player.getPlayer().getId();
         if (!playerSets.containsKey(id)) throw new RuntimeException("Player not found in the game");
         else return playerSets.get(id);
-    }
-
-    public Map<Long, Boolean> getPlayersTurn() {
-        return playersTurn;
-    }
-
-    public void setPlayersTurn(Map<Long, Boolean> playersTurn) {
-        this.playersTurn = playersTurn;
     }
 
     public void changeTurn() {
