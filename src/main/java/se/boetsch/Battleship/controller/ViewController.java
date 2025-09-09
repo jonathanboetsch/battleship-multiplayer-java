@@ -91,7 +91,7 @@ public class ViewController {
         } catch (PlayerRetrievalException e) {
             player = gameService.createCurrentPlayerWithName(playerName);
         }
-        Game game = GameService.findGameWithId(gameId);
+        Game game = gameService.findGameWithId(gameId);
         gameService.addPlayerToGameIfRelevant(player, game);
         PlayerSet playerSet = game.getPlayerSetForPlayer(player);
 
@@ -122,8 +122,8 @@ public class ViewController {
     public String placeShip(@PathVariable String playerName,
                             @PathVariable Integer gameId,
                             @ModelAttribute ShipWithPlacement shipWithPlacement, BindingResult br) {
-        CurrentPlayer player = gameService.findPlayerWithName(playerName);
-        Game game = GameService.findGameWithId(gameId);
+        CurrentPlayer player = gameService.findPlayerWithName(playerName).orElseThrow(() -> new PlayerRetrievalException(playerName));
+        Game game = gameService.findGameWithId(gameId);
         PlayerSet playerSet = game.getPlayerSetForPlayer(player);
         shipPlacementService.populateShip(shipWithPlacement);
         shipPlacementService.placeShipInPlayerSet(shipWithPlacement, playerSet);
