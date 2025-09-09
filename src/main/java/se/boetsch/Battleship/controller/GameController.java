@@ -30,11 +30,11 @@ public class GameController {
     }
 
     /// method used to retrieve the Game instance every time an API call is made
-    private static Game getGameWithId(Integer gameId) {
-        return GameService.findGameWithId(gameId);
+    private Game getGameWithId(Integer gameId) {
+        return gameService.findGameWithId(gameId);
     }
 
-    private static ResponseEntity<String> badRequest(String message) {
+    private ResponseEntity<String> badRequest(String message) {
         return ResponseEntity.badRequest().body(message);
     }
 
