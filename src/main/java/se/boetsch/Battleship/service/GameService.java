@@ -3,6 +3,8 @@ package se.boetsch.Battleship.service;
 import org.springframework.stereotype.Service;
 import se.boetsch.Battleship.domain.*;
 import se.boetsch.Battleship.entity.ShipCoordinates;
+import se.boetsch.Battleship.exception.GameException;
+import se.boetsch.Battleship.exception.PlayerRetrievalException;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +50,7 @@ public class GameService {
 
     private CurrentPlayer getOtherPlayerForGame(CurrentPlayer player, Game game) {
         long adversaryId = game.getOtherPlayerId(player.getPlayer().getId());
-        return currentPlayerService.findById(adversaryId).orElseThrow(() -> new GameException("Player with id " + adversaryId + " not found"));
+        return currentPlayerService.findById(adversaryId).orElseThrow(() -> new PlayerRetrievalException("Player with id " + adversaryId + " not found"));
     }
 
     public PlayerSet startNewGame(CurrentPlayer player1) {
