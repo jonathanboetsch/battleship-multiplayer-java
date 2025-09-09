@@ -25,6 +25,7 @@
 *.class
 *.log
 *.iml
+pom.xml
 
 # Maven
 target/
