@@ -52,6 +52,10 @@ public class GameService {
         playerSet.registerFireAt(coordinates, fireResult);
     }
 
+    public CurrentPlayer createCurrentPlayerWithName(String playerName) {
+        return currentPlayerService.create(playerName);
+    }
+
     private CurrentPlayer getOtherPlayerForGame(CurrentPlayer player, Game game) {
         long adversaryId = game.getOtherPlayerId(player.getPlayer().getId());
         return currentPlayerService.findById(adversaryId).orElseThrow(() -> new PlayerRetrievalException("Player with id " + adversaryId + " not found"));
