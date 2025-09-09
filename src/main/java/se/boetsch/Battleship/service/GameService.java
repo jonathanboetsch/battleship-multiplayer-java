@@ -132,6 +132,10 @@ public class GameService {
         }
     }
 
+    public PlayerSet getPlayerSetForGameAndPlayerId(long sessionId, long playerId) {
+        return games.get(sessionId).getPlayerSetForPlayer(playerId);
+    }
+
     // Todo: create a Builder so that the Game cannot be instantiated before two players are in.
 
 }

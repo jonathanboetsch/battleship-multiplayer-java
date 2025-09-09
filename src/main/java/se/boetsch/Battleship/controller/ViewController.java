@@ -89,7 +89,7 @@ public class ViewController {
         try {
             player = gameService.findPlayerWithName(playerName);
         } catch (PlayerRetrievalException e) {
-            player = gameService.createNewCurrentPlayer(playerName);
+            player = gameService.createCurrentPlayerWithName(playerName);
         }
         Game game = GameService.findGameWithId(gameId);
         gameService.addPlayerToGameIfRelevant(player, game);
