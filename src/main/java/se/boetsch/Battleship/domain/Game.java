@@ -5,6 +5,7 @@ import lombok.Setter;
 import se.boetsch.Battleship.dto.Status;
 import se.boetsch.Battleship.exception.GameException;
 import se.boetsch.Battleship.exception.PlayerRetrievalException;
+import se.boetsch.Battleship.exception.PlayerSetRetrievalException;
 
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +60,14 @@ public class Game {
         Long id = player.getPlayer().getId();
         if (!playerSets.containsKey(id)) throw new RuntimeException("Player not found in the game");
         else return playerSets.get(id);
+    }
+
+    public PlayerSet getPlayerSetForPlayerWithId(long playerId) {
+        try {
+            return playerSets.get(playerId);
+        } catch (Exception e) {
+            throw new PlayerSetRetrievalException(playerId);
+        }
     }
 
     public PlayerSet getPlayerSetForPlayerWithId(Long playerId) {
