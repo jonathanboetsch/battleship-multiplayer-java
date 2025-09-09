@@ -1,14 +1,10 @@
 package se.boetsch.Battleship.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.boetsch.Battleship.domain.*;
 import se.boetsch.Battleship.entity.ShipCoordinates;
-import se.boetsch.Battleship.entity.ShipModel;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -19,11 +15,8 @@ public class GameService {
     CurrentPlayerService currentPlayerService;
     private final
     BattleMapService battleMapService;
-    private final
-    ShipService shipService;
     private final GameMapper gameMapper;
     private final ShipPlacementService shipPlacementService;
-    private final ShipWithPlacementMapper shipWithPlacementMapper;
 
     public GameService(CurrentPlayerService currentPlayerService,
                        BattleMapService battleMapService,
@@ -33,7 +26,6 @@ public class GameService {
                        ShipWithPlacementMapper shipWithPlacementMapper, GameShipMapper gameShipMapper) {
         this.currentPlayerService = currentPlayerService;
         this.battleMapService = battleMapService;
-        this.shipService = shipService;
         this.gameMapper = gameMapper;
         this.shipPlacementService = shipPlacementService;
     }
