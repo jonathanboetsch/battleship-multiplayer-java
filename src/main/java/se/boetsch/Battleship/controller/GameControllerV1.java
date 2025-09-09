@@ -44,8 +44,9 @@ public class GameControllerV1 {
     @PostMapping
     public ResponseEntity<?> newGame(@Valid @RequestBody UserDTO user, ServerHttpRequest request) {
 
-        CurrentPlayer player1 = gameService.createNewCurrentPlayer(user.getPlayerName());
-        GameStatusDTO g = gameService.startNewGame(player1);
+        CurrentPlayer player1 = gameService.createCurrentPlayerWithName(user.getPlayerName());
+        Game newGame = gameService.startNewGame(player1);
+        GameStatusDTO g = gameMapper.toSummary(newGame);
 
         return ResponseEntity.created(ForwardedHeaderUtils. adaptFromForwardedHeaders(request.getURI(), request.getHeaders()) // returns the path of the request
                                 .path("/{id}") // appends the new game's id
