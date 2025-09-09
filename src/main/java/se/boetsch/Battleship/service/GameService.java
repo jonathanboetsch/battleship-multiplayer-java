@@ -52,9 +52,8 @@ public class GameService {
     }
 
     public PlayerSet startNewGame(CurrentPlayer player1) {
-        Game newGame = new Game(player1);
-        games.add(newGame);
-        newGame.setNumberOfRemainingShips(shipService.getShipModels().size());
+        Game newGame = new Game(player1.getPlayer().getId());
+        games.put(newGame.getSessionId().getId(), newGame);
         newGame.addPlayer(player1);
         return newGame.getPlayerSetForPlayer(player1);
     }
