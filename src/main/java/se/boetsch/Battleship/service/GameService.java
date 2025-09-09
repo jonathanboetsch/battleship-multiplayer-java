@@ -31,9 +31,6 @@ public class GameService {
         return Optional.ofNullable(gamesById.get(gameId)).orElseThrow(() -> new GameException("Game with id " + gameId + " not found"));
     }
 
-    public GameService() {
-    }
-
     public Game findGameWithId(int gameId) {
         return games.values().stream()
                 .filter(g -> g.getSessionId().getId() == gameId)
