@@ -82,7 +82,7 @@ public class GameService {
             throw new RuntimeException("You must finish placement of your ships");
 
         CurrentPlayer adversary = getOtherPlayerForGame(player, game);
-        if (!game.getPlayerSets().get(adversary).isShipsPlacementComplete())
+        if (!game.getPlayerSets().get(adversary.getPlayer().getId()).isShipsPlacementComplete())
             throw new RuntimeException("Other player must place its ships");
 
         Optional<GameShip> shipToBeFound = battleMapService.getShipAtCoordinatesForPlayerSet(
