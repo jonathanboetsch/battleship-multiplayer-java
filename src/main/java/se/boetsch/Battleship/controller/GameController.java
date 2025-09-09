@@ -6,6 +6,7 @@ import se.boetsch.Battleship.domain.*;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipOrientation;
 import se.boetsch.Battleship.exception.PlayerRetrievalException;
+import se.boetsch.Battleship.service.GameMapper;
 import se.boetsch.Battleship.service.GameService;
 import se.boetsch.Battleship.service.ShipPlacementService;
 import se.boetsch.Battleship.service.ShipService;
@@ -22,11 +23,13 @@ public class GameController {
     ShipPlacementService shipPlacementService;
     final
     ShipService shipService;
+    final GameMapper gameMapper;
 
-    public GameController(GameService gameService, ShipPlacementService shipPlacementService, ShipService shipService) {
+    public GameController(GameService gameService, ShipPlacementService shipPlacementService, ShipService shipService, GameMapper gameMapper) {
         this.gameService = gameService;
         this.shipPlacementService = shipPlacementService;
         this.shipService = shipService;
+        this.gameMapper = gameMapper;
     }
 
     /// method used to retrieve the Game instance every time an API call is made
@@ -46,7 +49,7 @@ public class GameController {
     public ResponseEntity<?> newGame(@PathVariable String playerName) {
         try {
             CurrentPlayer player1 = gameService.createCurrentPlayerWithName(playerName);
-            return ResponseEntity.ok().body(gameService.startNewGame(player1));
+            return ResponseEntity.ok().body(gameMapper.toSummary(gameService.startNewGame(player1)));
         } catch (Exception e) {
             return badRequest(e.getMessage());
         }
