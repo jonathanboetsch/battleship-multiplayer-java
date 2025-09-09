@@ -41,7 +41,7 @@ public class ViewController {
             @PathVariable int gameId,
             Model model
     ) {
-        CurrentPlayer player = gameService.findPlayerWithName(playerName);
+        CurrentPlayer player = gameService.findPlayerWithName(playerName).orElseThrow(() -> new PlayerRetrievalException(playerName));
         Game game = getGameWithId(gameId);
         PlayerSet playerSet = game.getPlayerSets().get(player);
 
@@ -87,7 +87,7 @@ public class ViewController {
         if (gameId == null) { throw new IllegalArgumentException("Game id cannot be null"); }
         CurrentPlayer player = null;
         try {
-            player = gameService.findPlayerWithName(playerName);
+            player = gameService.findPlayerWithName(playerName).orElseThrow(() -> new PlayerRetrievalException(playerName));
         } catch (PlayerRetrievalException e) {
             player = gameService.createCurrentPlayerWithName(playerName);
         }
