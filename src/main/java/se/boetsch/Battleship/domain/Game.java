@@ -59,9 +59,7 @@ public class Game {
     }
 
     public void changeTurn() {
-        for (Map.Entry<Long, Boolean> entry : playersTurn.entrySet()) {
-            playersTurn.put(entry.getKey(), !entry.getValue());
-        }
+        playersTurn.replaceAll((k, v) -> !v);
 
     }
 
