@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GameService {
 
+    private ConcurrentHashMap<Long, Game> games;
     private static ConcurrentHashMap<Long, Game> gamesById = new ConcurrentHashMap<>();
     private final
     CurrentPlayerService currentPlayerService;
@@ -23,6 +24,7 @@ public class GameService {
         this.battleMapService = battleMapService;
         this.gameMapper = gameMapper;
         this.shipPlacementService = shipPlacementService;
+        this.games = new ConcurrentHashMap<>();
     }
 
     public static Game findGameWithId(long gameId) {
