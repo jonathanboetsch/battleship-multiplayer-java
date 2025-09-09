@@ -61,11 +61,11 @@ public class GameService {
         return currentPlayerService.findById(adversaryId).orElseThrow(() -> new PlayerRetrievalException("Player with id " + adversaryId + " not found"));
     }
 
-    public PlayerSet startNewGame(CurrentPlayer player1) {
+    public Game startNewGame(CurrentPlayer player1) {
         Game newGame = new Game(player1.getPlayer().getId());
         games.put(newGame.getSessionId().getId(), newGame);
         newGame.addPlayer(player1);
-        return newGame.getPlayerSetForPlayer(player1);
+        return newGame;
     }
 
     public void createNewPlayerForGame(String name, Game game) {
