@@ -64,7 +64,7 @@ public class GameService {
 
     public CurrentPlayer retrieveOrCreatePlayerWithName(String playerName) {
 
-        Optional<CurrentPlayer> playerToBeFound = GameService.findPlayerWithName(playerName);
+        Optional<CurrentPlayer> playerToBeFound = findPlayerWithName(playerName);
 
         if (playerToBeFound.isPresent()) return playerToBeFound.get();
 
