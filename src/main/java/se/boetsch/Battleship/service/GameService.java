@@ -27,7 +27,7 @@ public class GameService {
         this.games = new ConcurrentHashMap<>();
     }
 
-    public static Game findGameWithId(long gameId) {
+    public Game findGameWithId(long gameId) {
         return Optional.ofNullable(gamesById.get(gameId)).orElseThrow(() -> new GameException("Game with id " + gameId + " not found"));
     }
 
@@ -45,7 +45,7 @@ public class GameService {
         return currentPlayerService.findByName(playerName);
     }
 
-    private static void registerFiredPoint(PlayerSet playerSet, ShipCoordinates coordinates, FireResult fireResult) {
+    private void registerFiredPoint(PlayerSet playerSet, ShipCoordinates coordinates, FireResult fireResult) {
         playerSet.registerFireAt(coordinates, fireResult);
     }
 
