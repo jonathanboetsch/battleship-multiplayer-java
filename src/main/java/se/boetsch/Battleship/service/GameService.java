@@ -46,12 +46,9 @@ public class GameService {
         playerSet.registerFireAt(coordinates, fireResult);
     }
 
-    private static CurrentPlayer getOtherPlayerForGame(CurrentPlayer player, Game game) {
-        return game.getPlayerSets().keySet().stream()
-                .filter(s -> !s.equals(player))
-                .findAny().orElseThrow(() -> new RuntimeException("Player not found in the game with id " + game.getSessionId()));
-    }
-
+    private CurrentPlayer getOtherPlayerForGame(CurrentPlayer player, Game game) {
+        long adversaryId = game.getOtherPlayerId(player.getPlayer().getId());
+        return currentPlayerService.findById(adversaryId).orElseThrow(() -> new GameException("Player with id " + adversaryId + " not found"));
     }
 
     public PlayerSet startNewGame(CurrentPlayer player1) {
