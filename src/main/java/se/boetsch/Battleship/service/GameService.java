@@ -66,11 +66,7 @@ public class GameService {
 
         Optional<CurrentPlayer> playerToBeFound = findPlayerWithName(playerName);
 
-        if (playerToBeFound.isPresent()) return playerToBeFound.get();
-
-        else {
-            return currentPlayerService.create(playerName);
-        }
+        return playerToBeFound.orElseGet(() -> currentPlayerService.create(playerName));
     }
 
     // TODO: store hits/misses on a map to help the player for the next moves
