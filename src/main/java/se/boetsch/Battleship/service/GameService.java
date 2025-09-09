@@ -18,12 +18,7 @@ public class GameService {
     private final GameMapper gameMapper;
     private final ShipPlacementService shipPlacementService;
 
-    public GameService(CurrentPlayerService currentPlayerService,
-                       BattleMapService battleMapService,
-                       GameMapper gameMapper,
-                       ShipPlacementService shipPlacementService,
-                       PlayerService playerService,
-                       ShipWithPlacementMapper shipWithPlacementMapper, GameShipMapper gameShipMapper) {
+    public GameService(CurrentPlayerService currentPlayerService, BattleMapService battleMapService, GameMapper gameMapper, ShipPlacementService shipPlacementService) {
         this.currentPlayerService = currentPlayerService;
         this.battleMapService = battleMapService;
         this.gameMapper = gameMapper;
