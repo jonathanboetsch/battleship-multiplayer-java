@@ -45,7 +45,7 @@ public class GameController {
     @GetMapping("/new")
     public ResponseEntity<?> newGame(@PathVariable String playerName) {
         try {
-            CurrentPlayer player1 = gameService.createNewCurrentPlayer(playerName);
+            CurrentPlayer player1 = gameService.createCurrentPlayerWithName(playerName);
             return ResponseEntity.ok().body(gameService.startNewGame(player1));
         } catch (Exception e) {
             return badRequest(e.getMessage());
