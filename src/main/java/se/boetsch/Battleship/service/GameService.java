@@ -72,13 +72,6 @@ public class GameService {
         game.addPlayer(currentPlayerService.create(name));
     }
 
-    public CurrentPlayer retrieveOrCreatePlayerWithName(String playerName) {
-
-        Optional<CurrentPlayer> playerToBeFound = findPlayerWithName(playerName);
-
-        return playerToBeFound.orElseGet(() -> currentPlayerService.create(playerName));
-    }
-
     // TODO: store hits/misses on a map to help the player for the next moves
     public String makePlayerFireAt(Game game, CurrentPlayer player, ShipCoordinates coordinates) {
         if (game.isFinished()) throw new RuntimeException("Game already finished");
