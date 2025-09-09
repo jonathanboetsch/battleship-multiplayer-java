@@ -3,6 +3,7 @@ package se.boetsch.Battleship.domain;
 import lombok.Getter;
 import lombok.Setter;
 import se.boetsch.Battleship.dto.Status;
+import se.boetsch.Battleship.exception.GameException;
 import se.boetsch.Battleship.exception.PlayerRetrievalException;
 
 import java.util.Map;
@@ -57,6 +58,14 @@ public class Game {
         Long id = player.getPlayer().getId();
         if (!playerSets.containsKey(id)) throw new RuntimeException("Player not found in the game");
         else return playerSets.get(id);
+    }
+
+    public PlayerSet getPlayerSetForPlayerWithId(Long playerId) {
+        try {
+            return playerSets.get(playerId);
+        } catch (Exception e) {
+            throw new GameException("Could not retrieve player set for player with id: " + playerId);
+        }
     }
 
     public void changeTurn() {
