@@ -31,8 +31,8 @@ public class ViewController {
     @Autowired
     ShipService shipService;
 
-    private static Game getGameWithId(Integer gameId) {
-        return GameService.findGameWithId(gameId);
+    private final Game getGameWithId(Integer gameId) {
+        return gameService.findGameWithId(gameId);
     }
 
     @GetMapping("/ships/view")
