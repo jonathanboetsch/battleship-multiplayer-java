@@ -9,6 +9,8 @@ import se.boetsch.Battleship.domain.ShipWithPlacement;
 import se.boetsch.Battleship.dto.ShipToPlaceDTO;
 import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.entity.ShipOrientation;
+import se.boetsch.Battleship.exception.ShipPlacementException;
+import se.boetsch.Battleship.exception.WrongInputException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,15 +30,12 @@ public class ShipPlacementService {
         this.battleMapService = battleMapService;
     }
 
-    // coordinates set to
-    // 0 if under examination before placement
-    // 1 if a boat is positioned
-
-    private static boolean isShipPlacedOutsideTheMap(ShipWithPlacement shipWithPlacement) {
-        return shipWithPlacement.getStartPosition().getX() + shipWithPlacement.getShip().getSize() > 10;
+    private boolean isShipPlacedOutsideTheMap(ShipWithPlacement shipWithPlacement) {
+        ShipCoordinates endShipCoordinates = updateExaminedCoordinates(shipWithPlacement, shipWithPlacement.getShip().getSize());
+        return endShipCoordinates.getX() > 10 || endShipCoordinates.getY() > 10;
     }
 
-    private static boolean isPlayerSetContainingShip(PlayerSet playerSet, String shipName) {
+    private boolean isPlayerSetContainingShip(PlayerSet playerSet, String shipName) {
         return playerSet.getPlacedShips()
                 .stream()
                 .anyMatch(existingShip -> existingShip.getName().equals(shipName));
@@ -46,19 +45,19 @@ public class ShipPlacementService {
     public GameShip placeShipInPlayerSet(ShipWithPlacement shipWithPlacement, PlayerSet playerSet) {
         String shipName = shipWithPlacement.getShip().getName();
         if (isShipPlacedOutsideTheMap(shipWithPlacement)) {
-            throw new RuntimeException("Ship positions outside the map !");
+            throw new ShipPlacementException("Ship positions outside the map !");
 
         } else if (isPlayerSetContainingShip(playerSet, shipName)) {
-            throw new RuntimeException("Ship already placed");
+            throw new ShipPlacementException("Ship already placed");
 
         } else {
             Optional<ShipCoordinates> conflictingShipCoordinates = getConflictingCoordinates(shipWithPlacement, playerSet);
             if (conflictingShipCoordinates.isPresent()) {
-                throw new RuntimeException(
+                throw new ShipPlacementException(
                         "Conflicts with " +
                                 battleMapService
                                         .getShipAtCoordinatesForPlayerSet(conflictingShipCoordinates.get(), playerSet)
-                                        .orElseThrow(RuntimeException::new) +
+                                        .map(GameShip::getName) +
                                 " at: " + conflictingShipCoordinates.get());
             }
 
@@ -128,7 +127,7 @@ public class ShipPlacementService {
         } else if (shipWithPlacement.getOrientation().equals(ShipOrientation.VERTICAL)) {
             return 0;
         } else {
-            throw new RuntimeException("Wrong value orientation");
+            throw new WrongInputException("Orientation format not allowed");
         }
     }
 

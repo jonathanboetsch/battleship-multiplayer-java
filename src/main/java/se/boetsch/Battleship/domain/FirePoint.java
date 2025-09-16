@@ -7,17 +7,17 @@ import java.util.Optional;
 public class FirePoint {
 
     private ShipCoordinates coordinates;
-    private FireResult fireResult;
+    private FireStatus fireStatus;
     private Optional<ShipModel> sunkShip;
 
-    public FirePoint(ShipCoordinates coordinates, FireResult fireResult) {
+    public FirePoint(ShipCoordinates coordinates, FireStatus fireStatus) {
         this.coordinates = coordinates;
-        this.fireResult = fireResult;
+        this.fireStatus = fireStatus;
         this.sunkShip = Optional.empty();
     }
 
-    public FirePoint(ShipCoordinates coordinates, FireResult fireResult, ShipModel sunkShip) {
-        this(coordinates, fireResult);
+    public FirePoint(ShipCoordinates coordinates, FireStatus fireStatus, ShipModel sunkShip) {
+        this(coordinates, fireStatus);
         this.sunkShip = Optional.of(sunkShip);
     }
 
@@ -32,12 +32,12 @@ public class FirePoint {
         this.coordinates = coordinates;
     }
 
-    public FireResult getFireResult() {
-        return fireResult;
+    public FireStatus getFireResult() {
+        return fireStatus;
     }
 
-    public void setFireResult(FireResult fireResult) {
-        this.fireResult = fireResult;
+    public void setFireResult(FireStatus fireStatus) {
+        this.fireStatus = fireStatus;
     }
 
     public Optional<ShipModel> getSunkShip() {

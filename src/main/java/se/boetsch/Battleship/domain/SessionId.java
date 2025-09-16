@@ -11,7 +11,7 @@ public class SessionId {
     @Getter
     private static Set<SessionId> sessionIds = ConcurrentHashMap.newKeySet();
 
-    private final AtomicLong seq = new AtomicLong(1); // start at 1
+    private static final AtomicLong seq = new AtomicLong(1); // start at 1
     @Getter
     private final long id;
 

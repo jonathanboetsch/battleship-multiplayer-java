@@ -35,8 +35,8 @@ public class ShipCoordinates implements Serializable {
     @Override
     public String toString() {
         return "ShipCoordinates{" +
-                "horizontalPos=" + x +
-                ", verticalPos=" + y +
+                "X=" + x +
+                ", Y=" + y +
                 '}';
     }
 }

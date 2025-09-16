@@ -2,6 +2,7 @@ package se.boetsch.Battleship.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import se.boetsch.Battleship.exception.FiringException;
 
 @Getter
 @Setter
@@ -21,7 +22,7 @@ public class GameShip {
             this.lives -= 1;
             if (lives == 0) setAlive(false);
         } else {
-            throw new RuntimeException("Ship already sunk");
+            throw new FiringException("Ship already sunk");
         }
     }
 

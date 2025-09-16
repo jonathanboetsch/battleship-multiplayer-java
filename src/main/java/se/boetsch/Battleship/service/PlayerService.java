@@ -3,6 +3,7 @@ package se.boetsch.Battleship.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.boetsch.Battleship.entity.Player;
+import se.boetsch.Battleship.exception.PlayerRetrievalException;
 import se.boetsch.Battleship.repository.PlayerRepository;
 
 @Service
@@ -19,7 +20,7 @@ public class PlayerService {
         try {
             return playerRepository.findByName(name).get();
         } catch (Exception e) {
-            throw new RuntimeException("Player not found with name: " + name);
+            throw new PlayerRetrievalException("Player not found with name: " + name);
         }
     }
 

@@ -11,6 +11,7 @@ import se.boetsch.Battleship.dto.GameStatusDTO;
 import se.boetsch.Battleship.dto.PlayerDTO;
 import se.boetsch.Battleship.dto.ShipWithPlacementDTO;
 import se.boetsch.Battleship.dto.UserDTO;
+import se.boetsch.Battleship.entity.ShipCoordinates;
 import se.boetsch.Battleship.service.*;
 
 import java.util.Map;
@@ -28,23 +29,29 @@ public class GameControllerV1 {
     ShipService shipService;
     final GameMapper gameMapper;
     final PlayerMapper playerMapper;
+    final ShipWithPlacementMapper shipWithPlacementMapper;
+    private final GameShipMapper gameShipMapper;
+    private final FireResultMapper fireResultMapper;
 
     public GameControllerV1(GameService gameService,
                             ShipPlacementService shipPlacementService,
                             ShipService shipService,
                             GameMapper gameMapper,
-                            PlayerMapper playerMapper) {
+                            PlayerMapper playerMapper, ShipWithPlacementMapper shipWithPlacementMapper, GameShipMapper gameShipMapper, FireResultMapper fireResultMapper) {
         this.gameService = gameService;
         this.shipPlacementService = shipPlacementService;
         this.shipService = shipService;
         this.gameMapper = gameMapper;
         this.playerMapper = playerMapper;
+        this.shipWithPlacementMapper = shipWithPlacementMapper;
+        this.gameShipMapper = gameShipMapper;
+        this.fireResultMapper = fireResultMapper;
     }
 
     @PostMapping
-    public ResponseEntity<?> newGame(@Valid @RequestBody UserDTO user, ServerHttpRequest request) {
+    public ResponseEntity<?> newGame(@Valid @RequestBody PlayerDTO user, ServerHttpRequest request) {
 
-        CurrentPlayer player1 = gameService.createCurrentPlayerWithName(user.getPlayerName());
+        CurrentPlayer player1 = gameService.createCurrentPlayerWithName(user.name());
         Game newGame = gameService.startNewGame(player1);
         GameStatusDTO g = gameMapper.toSummary(newGame);
 
@@ -73,8 +80,28 @@ public class GameControllerV1 {
             @PathVariable long gameId,
             @PathVariable long playerId,
             @Valid @RequestBody ShipWithPlacementDTO ship) {
-        return ResponseEntity.ok(Map.of("success", gameService.placeShip(ship, playerId, gameId))); // TODO: more info on the response (ship, placement?)
+        return ResponseEntity.ok(Map.of("success",
+                gameShipMapper.toOwnedShipDTO(gameService.placeShip(ship, playerId, gameId)))); // TODO: more info on the response (ship, placement?)
     }
 
+    @PostMapping("/{gameId}/players/{playerId}/fire")
+    public ResponseEntity<?> fireAtCoordinates(
+            @PathVariable long gameId,
+            @PathVariable long playerId,
+            @Valid @RequestBody ShipCoordinates coordinates) {
+        return ResponseEntity.ok(Map.of("success",
+                fireResultMapper.toDTO(gameService.makePlayerFireAt(playerId, gameId, coordinates))));
+    }
+
+    @PostMapping("/{gameId}/join")
+    public ResponseEntity<?> joinGame(@Valid @RequestBody PlayerDTO player,
+                                      @PathVariable long gameId) {
+        return ResponseEntity.ok(
+                Map.of(
+                        "success",
+                        gameMapper.toDTO(gameService.joinGame(gameId, player.name()))
+                )
+        );
+    }
 
 }

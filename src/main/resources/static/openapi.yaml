@@ -36,10 +36,7 @@ paths:
             schema:
               type: object
               properties:
-                hostPlayerName:
-                  type: string
-              required: [ hostPlayerName ]
-              example: { hostPlayerName: "Alice" }
+                $ref: '#/components/schemas/PlayerDto'
       responses:
         '201':
           description: Game created
@@ -52,6 +49,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GameSummaryDto'
+
+  /games/{id}/join:
+    post:
+      summary: Join an existing game
+      description: Adds a second player to an existing game.
+      tags: [ Games ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerDto'
+      responses:
+        '200':
+          description: Player successfully joined
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  game:
+                    $ref: '#/components/schemas/GameSummaryDto'
+                  player:
+                    $ref: '#/components/schemas/PlayerDto'
+        '404':
+          description: Game not found
+        '400':
+          description: Invalid request (e.g. game already full)
 
   /api/v1/games/{gameId}:
     get:
@@ -224,9 +256,16 @@ components:
       type: object
       properties:
         playerId:
-          type: string
+          type: integer
+          format: int64
+          description: Optional player ID, assigned by the server if not provided
         name:
           type: string
+          description: The name of the player (must be unique per session)
+      required:
+        - name
+      example:
+        name: Alice
     ShipToPlaceDto:
       type: object
       properties:

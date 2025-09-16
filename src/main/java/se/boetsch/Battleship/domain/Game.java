@@ -3,9 +3,7 @@ package se.boetsch.Battleship.domain;
 import lombok.Getter;
 import lombok.Setter;
 import se.boetsch.Battleship.dto.Status;
-import se.boetsch.Battleship.exception.GameException;
-import se.boetsch.Battleship.exception.PlayerRetrievalException;
-import se.boetsch.Battleship.exception.PlayerSetRetrievalException;
+import se.boetsch.Battleship.exception.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -46,19 +44,27 @@ public class Game {
 
 
     public void addPlayer(CurrentPlayer player) {
+        checkPlayerAlreadyInGame(player);
         checkNumberOfPlayers(playerIds.size() + 1);
-        playerIds.add(player.getPlayer().getId());
-        playerSets.put(player.getPlayer().getId(), new PlayerSet(sessionId));
-        playersTurn.put(player.getPlayer().getId(), false);
+        long playerId = player.getPlayer().getId();
+        playerIds.add(playerId);
+        playerSets.put(playerId, new PlayerSet(sessionId));
+        playersTurn.put(playerId, false);
+        System.out.println("player with id " + playerId + " added to game");
+    }
+
+    private void checkPlayerAlreadyInGame(CurrentPlayer player) {
+        if (playerIds.contains(player.getPlayer().getId())) {throw new GameLogicException("Player with id " + player.getPlayer().getId() + " already added to game");
+        }
     }
 
     private void checkNumberOfPlayers(int number) {
-        if (number > 2) throw new RuntimeException("Cannot add more than 2 players");
+        if (number > 2) throw new PlayerCreationException("Cannot add more than 2 players");
     }
 
     public PlayerSet getPlayerSetForPlayer(CurrentPlayer player) {
         Long id = player.getPlayer().getId();
-        if (!playerSets.containsKey(id)) throw new RuntimeException("Player not found in the game");
+        if (!playerSets.containsKey(id)) throw new PlayerRetrievalException("Player not found in the game");
         else return playerSets.get(id);
     }
 

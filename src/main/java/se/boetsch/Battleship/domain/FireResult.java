@@ -1,6 +1,6 @@
 package se.boetsch.Battleship.domain;
 
-public enum FireResult {
-    HIT,
-    MISS
+import se.boetsch.Battleship.entity.ShipCoordinates;
+
+public record FireResult(FireStatus status, ShipCoordinates coordinates) {
 }

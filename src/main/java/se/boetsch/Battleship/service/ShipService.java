@@ -2,6 +2,8 @@ package se.boetsch.Battleship.service;
 
 import org.springframework.stereotype.Service;
 import se.boetsch.Battleship.domain.ShipModel;
+import se.boetsch.Battleship.exception.ShipPlacementException;
+import se.boetsch.Battleship.exception.WrongInputException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,11 +31,11 @@ public class ShipService {
     }
 
     public ShipModel getShipByName(String name) {
-        if (name == null) {throw new RuntimeException("Name cannot be null");}
+        if (name == null) {throw new WrongInputException("Name cannot be null");}
         return shipModels.stream()
                 .filter(shipModel -> shipModel.getName().equalsIgnoreCase(name))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException("Wrong ship name"));
+                .orElseThrow(() -> new WrongInputException("Wrong ship name"));
     }
 
 }

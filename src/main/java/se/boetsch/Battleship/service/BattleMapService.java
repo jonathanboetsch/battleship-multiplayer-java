@@ -11,7 +11,7 @@ import java.util.Optional;
 public class BattleMapService {
 
     public Optional<GameShip> getShipAtCoordinatesForPlayerSet(ShipCoordinates shipCoordinates, PlayerSet playerSet) {
-        return Optional.ofNullable(playerSet.getBattleMap().getMap()[shipCoordinates.getX()][shipCoordinates.getY()]);
+        return playerSet.getBattleMap().getShipAtCoordinates(shipCoordinates.getX(),shipCoordinates.getY());
     }
 
     public void setShipAtCoordinatesForPlayerSet(GameShip ship, int x, int y, PlayerSet playerSet) {

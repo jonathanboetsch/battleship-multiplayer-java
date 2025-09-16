@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import se.boetsch.Battleship.domain.GameShip;
 import se.boetsch.Battleship.entity.Player;
 import se.boetsch.Battleship.entity.ShipCoordinates;
+import se.boetsch.Battleship.exception.ShipPlacementException;
+
+import java.util.Optional;
 
 
 @Entity
@@ -41,7 +44,11 @@ public class BattleMap {
         try {
             map[coordinates.getX()][coordinates.getY()] = ship;
         } catch (Exception e) {
-            throw new RuntimeException("Error at ship placement inside the BattleMap instance");
+            throw new ShipPlacementException("Error at ship placement inside the BattleMap instance");
         }
+    }
+
+    public Optional<GameShip> getShipAtCoordinates(int x, int y) {
+        return Optional.ofNullable(map[x][y]);
     }
 }
