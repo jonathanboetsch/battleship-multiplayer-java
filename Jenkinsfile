@@ -45,10 +45,10 @@ pipeline {
                 }
             }
         }
+        }
         post {
                  always {
                      echo "Pipeline finished: ${currentBuild.result}"
                  }
              }
-         }
          }
