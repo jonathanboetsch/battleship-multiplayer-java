@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "battleship"
+        APP_NAME = "Battleship"
     }
 
     stages {
