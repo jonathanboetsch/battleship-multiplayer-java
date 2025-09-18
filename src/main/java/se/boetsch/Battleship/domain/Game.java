@@ -30,6 +30,7 @@ public class Game {
         this();
         this.playerIds.add(playerId);
         playerSets.put(playerId, new PlayerSet(sessionId));
+        playersTurn.put(playerId, true);
     }
 
     public boolean isFinished() {
