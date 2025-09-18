@@ -186,8 +186,12 @@ public class GameService {
     }
 
     public GameShip placeShip(@Valid ShipWithPlacementDTO ship, long playerId, long gameId) {
-        return shipPlacementService.placeShipInPlayerSet(shipWithPlacementMapper.toDomain(ship),
-                games.get(gameId).getPlayerSetForPlayerWithId(playerId));
+        try {
+            return shipPlacementService.placeShipInPlayerSet(shipWithPlacementMapper.toDomain(ship),
+                    games.get(gameId).getPlayerSetForPlayerWithId(playerId)); // getPlayerSetForPlayerWithId() throws a PlayerSetRetrievalException if relevant
+        } catch (NullPointerException e) { // catches the remaining Exception i.e. when calling games.get()
+            throw new GameNotFoundException(gameId);
+        }
     }
 
     // Todo: create a Builder so that the Game cannot be instantiated before two players are in.
