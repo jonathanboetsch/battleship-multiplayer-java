@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import se.boetsch.Battleship.domain.GameShip;
 import se.boetsch.Battleship.entity.Player;
 import se.boetsch.Battleship.entity.ShipCoordinates;
+import se.boetsch.Battleship.exception.FiringException;
 import se.boetsch.Battleship.exception.ShipPlacementException;
 
 import java.util.Optional;
@@ -49,6 +50,9 @@ public class BattleMap {
     }
 
     public Optional<GameShip> getShipAtCoordinates(int x, int y) {
+        if (x < 0 || y < 0 || x >= map.length || y >= map[0].length) {
+            throw new FiringException("Invalid coordinates: must be between 0 and " + (map.length - 1) + " (inclusive)");
+        }
         return Optional.ofNullable(map[x][y]);
     }
 }
