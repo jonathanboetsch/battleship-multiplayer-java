@@ -58,7 +58,7 @@ public class ShipPlacementService {
                                 battleMapService
                                         .getShipAtCoordinatesForPlayerSet(conflictingShipCoordinates.get(), playerSet)
                                         .map(GameShip::getName).get() +
-                                " at: " + conflictingShipCoordinates.get());
+                                " at coordinates ( " + conflictingShipCoordinates.get().getY() + ", " + conflictingShipCoordinates.get().getY() + ")" );
             }
 
             GameShip shipToPlace;
