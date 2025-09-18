@@ -194,8 +194,6 @@ public class GameService {
         }
     }
 
-    // Todo: create a Builder so that the Game cannot be instantiated before two players are in.
-
     public FireResult makePlayerFireAt(long playerId, long gameId, ShipCoordinates coordinates) {
         CurrentPlayer player = retrieveCurrentPlayerWithId(playerId);
         Game game = retrieveGameById(gameId);
