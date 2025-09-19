@@ -186,12 +186,9 @@ public class GameService {
     }
 
     public GameShip placeShip(@Valid ShipWithPlacementDTO ship, long playerId, long gameId) {
-        try {
-            return shipPlacementService.placeShipInPlayerSet(shipWithPlacementMapper.toDomain(ship),
-                    games.get(gameId).getPlayerSetForPlayerWithId(playerId)); // getPlayerSetForPlayerWithId() throws a PlayerSetRetrievalException if relevant
-        } catch (NullPointerException e) { // catches the remaining Exception i.e. when calling games.get()
-            throw new GameNotFoundException(gameId);
-        }
+        if (games.get(gameId)==null) throw new GameNotFoundException(gameId);
+        return shipPlacementService.placeShipInPlayerSet(shipWithPlacementMapper.toDomain(ship),
+                games.get(gameId).getPlayerSetForPlayerWithId(playerId)); // getPlayerSetForPlayerWithId() throws a PlayerSetRetrievalException if relevant
     }
 
     public FireResult makePlayerFireAt(long playerId, long gameId, ShipCoordinates coordinates) {
