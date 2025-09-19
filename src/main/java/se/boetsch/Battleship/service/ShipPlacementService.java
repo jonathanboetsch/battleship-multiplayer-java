@@ -44,11 +44,11 @@ public class ShipPlacementService {
     @Transactional
     public GameShip placeShipInPlayerSet(ShipWithPlacement shipWithPlacement, PlayerSet playerSet) {
         String shipName = shipWithPlacement.getShip().getName();
-        if (isShipPlacedOutsideTheMap(shipWithPlacement)) {
-            throw new ShipPlacementException("Ship positions outside the map !");
-
-        } else if (isPlayerSetContainingShip(playerSet, shipName)) {
+        if ( isPlayerSetContainingShip(playerSet, shipName)) {
             throw new ShipPlacementException("Ship already placed");
+
+        } else if ( isShipPlacedOutsideTheMap(shipWithPlacement)) {
+            throw new ShipPlacementException("Ship positions outside the map !");
 
         } else {
             Optional<ShipCoordinates> conflictingShipCoordinates = getConflictingCoordinates(shipWithPlacement, playerSet);
