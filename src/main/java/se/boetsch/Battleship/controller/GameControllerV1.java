@@ -66,7 +66,7 @@ public class GameControllerV1 {
 
     @GetMapping("{gameId}")
     public ResponseEntity<?> getGameStatus(@Valid @RequestBody PlayerDTO inputPlayer, @PathVariable int gameId) {
-        Game g = gameService.findGameWithId(gameId);
+        Game g = gameService.findGameWithId((long) gameId);
         return ResponseEntity.ok(gameMapper.toDTO(g));
     }
 
