@@ -202,7 +202,7 @@ public class GameService {
 
     private Game retrieveGameById(long gameId) {
         return Optional.ofNullable(games.get(gameId))
-                .orElseThrow(() -> new GameException("Game with id " + gameId + " not found"));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
     }
 
     private CurrentPlayer retrieveCurrentPlayerWithId(long playerId) {
