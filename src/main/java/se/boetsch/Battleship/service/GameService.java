@@ -89,16 +89,6 @@ public class GameService {
 
         Optional<GameShip> shipToBeFound = resolveFire(game, adversary, coordinates);
 
-        // Core logic of firing handling from orchestrator's standpoint
-        // (GameService
-        //  -> PlayerSet
-        //      .registerFiredPoint() -> PlayerSet
-        //  -> GameShip
-        //      .takeOneLife()
-        //      .isAlive()
-        //  -> Game
-        //      .changeTurn()
-        //      .isFinished() )
         try {
             if (shipToBeFound.isPresent()) {
                 return handleHit(game, player, coordinates, shipToBeFound);
