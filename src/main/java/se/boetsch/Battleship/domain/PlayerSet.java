@@ -81,4 +81,9 @@ public class PlayerSet {
         this.fires.add(firePoint);
     }
 
+    public boolean areAllShipsSunk(){
+        if (placedShips.isEmpty()) return false;
+        return placedShips.stream().noneMatch(GameShip::isAlive);
+    }
+
 }
