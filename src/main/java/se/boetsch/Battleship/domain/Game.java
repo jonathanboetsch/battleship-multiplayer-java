@@ -17,13 +17,14 @@ public class Game {
     private Set<Long> playerIds;
     private Map<Long, PlayerSet> playerSets;
     private Map<Long, Boolean> playersTurn = new ConcurrentHashMap<>(2);
-    boolean winner = false;
+    private Status status;
 
     public Game() {
         this.playerIds = ConcurrentHashMap.newKeySet();
         this.playerSets = new ConcurrentHashMap<>(2);
         this.sessionId = new SessionId();
         sessionIds.add(sessionId);
+        this.status=Status.WAITING_FOR_PLAYERS;
     }
 
     public Game(Long playerId) {
@@ -92,10 +93,17 @@ public class Game {
 
     public Status getStatus() {
 
-        if (winner) return Status.FINISHED;
-        if (playerIds.size() < 2) return Status.WAITING_FOR_PLAYERS;
-        if (!allShipsPlaced()) return Status.PLACEMENT_PHASE;
-        return Status.IN_PROGRESS;
+        if (isFinished(playerSets)) return status=Status.FINISHED;
+        if (playerIds.size() < 2) return status=Status.WAITING_FOR_PLAYERS;
+        if (!allShipsPlaced()) return status=Status.PLACEMENT_PHASE;
+        return status=Status.IN_PROGRESS;
+    }
+
+    private boolean isFinished(Map<Long, PlayerSet> playerSets) {
+        for (PlayerSet playerSet : playerSets.values()) {
+            if (playerSet.areAllShipsSunk()) return true;
+        }
+        return false;
     }
 
     private boolean allShipsPlaced() {
