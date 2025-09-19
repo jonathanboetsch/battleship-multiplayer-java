@@ -1,11 +1,15 @@
 package se.boetsch.Battleship.entity;
 
+import jakarta.validation.constraints.Min;
+
 import java.io.Serializable;
 
 public class ShipCoordinates implements Serializable {
 
+    @Min(0)
     int x;
 
+    @Min(0)
     int y;
 
     public ShipCoordinates() {
