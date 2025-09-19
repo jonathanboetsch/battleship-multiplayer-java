@@ -1,6 +1,7 @@
 package se.boetsch.Battleship.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import se.boetsch.Battleship.entity.ShipCoordinates;
@@ -15,10 +16,13 @@ public class ShipWithPlacement implements Serializable {
     @JsonIgnore
     private ShipModel ship;
 
+    @NotEmpty
     private String name;
 
+    @NotEmpty
     private ShipCoordinates startPosition;
 
+    @NotEmpty
     private ShipOrientation orientation;
 
     public ShipWithPlacement() {
