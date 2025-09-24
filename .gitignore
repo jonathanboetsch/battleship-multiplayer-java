@@ -37,3 +37,4 @@ replay_pid*
 # App data
 /data/
 /.factorypath
+db_cred.env
